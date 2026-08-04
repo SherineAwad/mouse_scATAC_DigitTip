@@ -28,7 +28,6 @@
 
 <img src="figures/SINAA6_prefilter_tsse_vs_n_fragment.png" width="45%" /><img src="figures/SINAA6_postfilter_tsse_vs_n_fragment.png" width="45%" />
 
-<img src="figures/SINAA6_prefilter_tss_profile.png" width="45%" />
 
 ---
 
@@ -44,7 +43,6 @@
 
 <img src="figures/SINAB6_prefilter_tsse_vs_n_fragment.png" width="45%" /><img src="figures/SINAB6_postfilter_tsse_vs_n_fragment.png" width="45%" />
 
-<img src="figures/SINAB6_prefilter_tss_profile.png" width="45%" />
 
 ---
 
@@ -60,7 +58,6 @@
 
 <img src="figures/SINAA8_prefilter_tsse_vs_n_fragment.png" width="45%" /><img src="figures/SINAA8_postfilter_tsse_vs_n_fragment.png" width="45%" />
 
-<img src="figures/SINAA8_prefilter_tss_profile.png" width="45%" />
 
 ---
 
@@ -76,6 +73,5 @@
 
 <img src="figures/SINAH5_prefilter_tsse_vs_n_fragment.png" width="45%" /><img src="figures/SINAH5_postfilter_tsse_vs_n_fragment.png" width="45%" />
 
-<img src="figures/SINAH5_prefilter_tss_profile.png" width="45%" />
 
 
