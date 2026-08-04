@@ -4,30 +4,27 @@
 
 Following generation of the initial QC metrics, cells are filtered to remove low-quality nuclei prior to downstream analysis. A cell is retained **only if it satisfies all of the following criteria**:
 
-```
-##### `n_fragment`
+> ##### `n_fragment`
+>
+> The total number of fragments assigned to each cell barcode, commonly used as a measure of sequencing depth per cell.
+>
+> - **Low (<1,000):** Typically indicates empty droplets, debris, or low-quality cells with insufficient data.
+> - **High (>50,000):** May indicate doublets or multiplets, but can also represent genuine high-quality cells. These cells should be inspected rather than automatically removed.
+>
+> ##### `frac_dup`
+>
+> The fraction of fragments that are PCR duplicates (identical genomic start/end positions), used as a measure of library complexity.
+>
+> - **Low (<0.1):** Indicates high library complexity with many unique fragments. Generally considered good quality.
+> - **High (>0.5):** Indicates low library complexity, where many fragments are duplicated PCR products. These cells contain less unique information and are typically removed.
+>
+> ##### `TSSe`
+>
+> Transcription Start Site enrichment score: a per-cell measure of signal-to-noise ratio, comparing fragment enrichment around transcription start sites (TSSs) versus surrounding regions.
+>
+> - **High (>2.0):** Indicates good signal quality, with fragments enriched around promoters. These cells generally have higher-quality chromatin accessibility data.
+> - **Low (<1.5):** Indicates poor signal quality, with weak TSS enrichment and more background noise. These cells are typically removed.
 
-The total number of fragments assigned to each cell barcode, commonly used as a measure of sequencing depth per cell.
-
-- **Low (<1,000):** Typically indicates empty droplets, debris, or low-quality cells with insufficient data.
-- **High (>50,000):** May indicate doublets or multiplets, but can also represent genuine high-quality cells. These cells should be inspected rather than automatically removed.
-
-
-##### `frac_dup`
-
-The fraction of fragments that are PCR duplicates (identical genomic start/end positions), used as a measure of library complexity.
-
-- **Low (<0.1):** Indicates high library complexity with many unique fragments. Generally considered good quality.
-- **High (>0.5):** Indicates low library complexity, where many fragments are duplicated PCR products. These cells contain less unique information and are typically removed.
-
-
-##### `TSSe`
-
-Transcription Start Site enrichment score: a per-cell measure of signal-to-noise ratio, comparing fragment enrichment around transcription start sites (TSSs) versus surrounding regions.
-
-- **High (>2.0):** Indicates good signal quality, with fragments enriched around promoters. These cells generally have higher-quality chromatin accessibility data.
-- **Low (<1.5):** Indicates poor signal quality, with weak TSS enrichment and more background noise. These cells are typically removed.
-```
 
 
 | Metric | Threshold | Purpose |
