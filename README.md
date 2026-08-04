@@ -4,6 +4,7 @@
 
 Following generation of the initial QC metrics, cells are filtered to remove low-quality nuclei prior to downstream analysis. A cell is retained **only if it satisfies all of the following criteria**:
 
+```
 ##### `n_fragment`
 
 The total number of fragments assigned to each cell barcode, commonly used as a measure of sequencing depth per cell.
@@ -26,7 +27,7 @@ Transcription Start Site enrichment score: a per-cell measure of signal-to-noise
 
 - **High (>2.0):** Indicates good signal quality, with fragments enriched around promoters. These cells generally have higher-quality chromatin accessibility data.
 - **Low (<1.5):** Indicates poor signal quality, with weak TSS enrichment and more background noise. These cells are typically removed.
-
+```
 
 
 | Metric | Threshold | Purpose |
