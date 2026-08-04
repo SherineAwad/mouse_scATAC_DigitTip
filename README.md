@@ -1,4 +1,4 @@
-# scATAC mosue digit tip project
+# scATAC mouse digit tip project
 
 # Quality Control (QC) Filtering
 
@@ -18,6 +18,13 @@ Keep cell if:
 AND 1.5 ≤ TSSe ≤ 100
 AND frac_dup ≤ 0.5
 ```
+#### Stats
+| Sample | Cells Before Filtering | Cells After Filtering | Cells Retained (%) |
+|--------|-----------------------:|----------------------:|-------------------:|
+| **SINAA6** | 83,873 | 14,007 | 16.70% |
+| **SINAB6** | 75,844 | 63,199 | 83.33% |
+| **SINAA8** | 79,172 | 62,086 | 78.42% |
+| **SINAH5** | 83,834 | 49,410 | 58.94% |
 
 #### SINAA6
 
@@ -75,6 +82,5 @@ AND frac_dup ≤ 0.5
 <img src="figures/SINAH5_prefilter_frac_dup_vs_n_fragment.png" width="45%" /><img src="figures/SINAH5_postfilter_frac_dup_vs_n_fragment.png" width="45%" />
 
 <img src="figures/SINAH5_prefilter_tsse_vs_n_fragment.png" width="45%" /><img src="figures/SINAH5_postfilter_tsse_vs_n_fragment.png" width="45%" />
-
 
 
