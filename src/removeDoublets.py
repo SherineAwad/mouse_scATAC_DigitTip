@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import os
 import matplotlib.pyplot as plt
@@ -6,12 +8,10 @@ import snapatac2 as snap
 
 
 def plot_hist(adata, column, prefix, stage, bins=50):
-    # Check existence without .columns
     if column not in adata.obs:
         print(f"Skipping {column}: not found")
         return
     plt.figure(figsize=(7, 5))
-    # Convert to numpy array (works for pandas Series or pyarrow array)
     vals = np.array(adata.obs[column])
     plt.hist(vals, bins=bins)
     plt.xlabel(column)
@@ -50,43 +50,45 @@ def main():
     parser.add_argument("--prefix", required=True, help="Prefix for output figures")
     args = parser.parse_args()
 
+    # Create the figures directory
     os.makedirs("figures", exist_ok=True)
 
+    # SIMPLE FIX 1: Ensure the destination directory for the output file actually exists
+    out_dir = os.path.dirname(args.output)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+
     print("Reading object...")
-    # Use snap.read to handle the merged file format
     adata = snap.read(args.input)
     print(f"Loaded: {adata.n_obs} cells")
 
-    # Select variable features – required for scrublet
     print("Selecting variable features...")
     snap.pp.select_features(adata)
 
-    # Run Scrublet doublet detection
     print("Running doublet detection (snap.pp.scrublet)...")
     snap.pp.scrublet(adata)
 
-    # Generate before-removal figures
     print("Generating before-removal figures...")
     plot_hist(adata, "doublet_probability", args.prefix, "before_doublet_removal")
     plot_scatter(adata, "n_fragment", "doublet_probability", args.prefix, "before_doublet_removal")
 
-    # Filter out cells with doublet probability > 0.5
     print("Filtering doublets...")
     snap.pp.filter_doublets(adata, probability_threshold=0.5)
-
     print(f"Remaining cells after doublet removal: {adata.n_obs}")
 
-    # Generate after-removal figures
     print("Generating after-removal figures...")
     plot_hist(adata, "doublet_probability", args.prefix, "after_doublet_removal")
     plot_scatter(adata, "n_fragment", "doublet_probability", args.prefix, "after_doublet_removal")
 
-    # Save filtered object
-    print(f"Saving filtered object to {args.output}")
-    adata.write_h5ad(args.output)
+    # SIMPLE FIX 2: Break the active read lock on the input file before writing
+    print("Loading filtered data into memory for saving...")
+    adata = adata.to_memory()
 
+    print(f"Saving filtered object to {args.output}")
+    adata.write(args.output)
     print("Done.")
 
 
 if __name__ == "__main__":
     main()
+
