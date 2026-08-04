@@ -50,27 +50,27 @@ AND frac_dup ≤ 0.5
 | **SINAH5** | 83,834 | 49,410 | 58.94% |
 
 
-#### Note 
-##### `frac_dup` vs `n_fragment` Scatter Plot
-
-Shows how PCR duplication changes with sequencing depth per cell.
-
-**Purpose:**
-
-- **Detect low-complexity libraries:** Cells with high `frac_dup` (>0.5), especially at moderate `n_fragment`, contain many duplicated fragments and have reduced unique information.
-- **Identify potential doublets:** Cells with very high `n_fragment` (>50k) together with elevated `frac_dup` may represent multiplets, although they require additional confirmation.
-- **Assess data quality:** High-quality cells should maintain relatively low `frac_dup` across different fragment depths, indicating a higher proportion of unique fragments.
-
-
-##### `TSSe` vs `n_fragment` Scatter Plot
-
-Shows how TSS enrichment changes with sequencing depth per cell.
-
-**Purpose:**
-
-- **Detect poor-quality cells:** Cells with high `n_fragment` but low `TSSe` (<1.5) contain many fragments but weak promoter enrichment, indicating high background noise or poor-quality nuclei. These cells are typically removed.
-- **Assess sequencing saturation:** Good cells often show increasing `TSSe` with increasing fragment number until reaching a plateau.
-- **Identify high-quality cells:** Cells with high `n_fragment` and high `TSSe` (top-right region) generally represent deeply sequenced, high-quality libraries and are usually retained.
+> #### Note
+>
+> ##### `frac_dup` vs `n_fragment` Scatter Plot
+>
+> Shows how PCR duplication changes with sequencing depth per cell.
+>
+> **Purpose:**
+>
+> - **Detect low-complexity libraries:** Cells with high `frac_dup` (>0.5), especially at moderate `n_fragment`, contain many duplicated fragments and have reduced unique information.
+> - **Identify potential doublets:** Cells with very high `n_fragment` (>50k) together with elevated `frac_dup` may represent multiplets, although they require additional confirmation.
+> - **Assess data quality:** High-quality cells should maintain relatively low `frac_dup` across different fragment depths, indicating a higher proportion of unique fragments.
+>
+> ##### `TSSe` vs `n_fragment` Scatter Plot
+>
+> Shows how TSS enrichment changes with sequencing depth per cell.
+>
+> **Purpose:**
+>
+> - **Detect poor-quality cells:** Cells with high `n_fragment` but low `TSSe` (<1.5) contain many fragments but weak promoter enrichment, indicating high background noise or poor-quality nuclei. These cells are typically removed.
+> - **Assess sequencing saturation:** Good cells often show increasing `TSSe` with increasing fragment number until reaching a plateau.
+> - **Identify high-quality cells:** Cells with high `n_fragment` and high `TSSe` (top-right region) generally represent deeply sequenced, high-quality libraries and are usually retained.
 
 #### SINAA6
 
