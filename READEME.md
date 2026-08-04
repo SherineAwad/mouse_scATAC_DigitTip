@@ -1,19 +1,6 @@
 # scATAC mosue digit tip project
 
 
-
-## QC checks 
-
-##### TSSE Profile 
-<img src="figures/SINAA6_prefilter_tss_profile.png" width="45%"/><img src="figures/SINAB6_prefilter_tss_profile.png" width="45%" />
-<img src="figures/SINAA8_prefilter_tss_profile.png" width="45%"/><img src="figures/SINAH5_prefilter_tss_profile.png" width="45%" />
-
-##### Fragments size 
-<img src="figures/SINAA6_prefilter_fragment_size.png" width="45%"/><img src="figures/SINAB6_prefilter_fragment_size.png" width="45%"/>
-<img src="figures/SINAA8_prefilter_fragment_size.png" width="45%"/><img src="figures/SINAH5_prefilter_fragment_size.png" width="45%"/>
-
-
-
 ## Prefilter and post filter 
 
 #### SINAA6
