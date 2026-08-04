@@ -83,7 +83,8 @@ def main():
 
     # Save filtered object
     print(f"Saving filtered object to {args.output}")
-    adata.write(args.output, compression="gzip")
+    adata.write_h5ad(args.output)
+
     print("Done.")
 
 

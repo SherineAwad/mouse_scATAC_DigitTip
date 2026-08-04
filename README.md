@@ -1,6 +1,6 @@
-# scATAC mouse digit tip project
+# scATAC mouse digit tip project - using snapATAC2 
 
-# Quality Control (QC) Filtering
+## Quality Control (QC) Filtering
 
 Following generation of the initial QC metrics, cells are filtered to remove low-quality nuclei prior to downstream analysis. A cell is retained **only if it satisfies all of the following criteria**:
 
@@ -130,6 +130,11 @@ AND frac_dup ≤ 0.5
 <img src="figures/SINAH5_prefilter_tsse_vs_n_fragment.png" width="45%" /><img src="figures/SINAH5_postfilter_tsse_vs_n_fragment.png" width="45%" />
 
 
+### Doublet Removal 
+
+![](figures/noDoublets_before_doublet_removal_doublet_probability.png?v=1)
+
+![](figures/noDoublets_before_doublet_removal_doublet_probability_vs_n_fragment.png?v=1)
 
 
 ## References 
