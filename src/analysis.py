@@ -56,6 +56,12 @@ def main():
     print("Running UMAP...")
     snap.tl.umap(adata)
 
+    
+    print(f"Saving object to {args.output}")
+    adata.write(args.output, compression="gzip")
+    print("Done.")
+
+
     print("Generating UMAP figure...")
     plt.figure(figsize=(18, 8))
     sc.pl.umap(adata, color="leiden", show=False)
@@ -66,49 +72,57 @@ def main():
     
     print("Generating QC UMAP plots...")
 
-    sc.pl.umap(
-        adata,
-        color=[
-        "leiden",
-        "sample",
-        "n_fragment",
-        "tsse",
-        "frac_dup"
-        ],
-       ncols=3,
-       show=False)
+    for color in [
+       "leiden",
+       "sample",
+       "n_fragment",
+       "tsse",
+       "frac_dup"
+       ]:
 
-    outfile = os.path.join("figures", f"{args.prefix}_umap_qc.png")
-    plt.savefig(outfile, dpi=300, bbox_inches="tight")
-    plt.close()
+       sc.pl.umap(
+          adata,
+          color=color,
+          show=False
+        )
 
-    print(f"Saved {outfile}")
+       outfile = os.path.join(
+        "figures",
+        f"{args.prefix}_umap_{color}.png"
+       )
 
-    print(f"Saving object to {args.output}")
-    adata.write(args.output, compression="gzip")
-    print("Done.")
+       plt.savefig(
+        outfile,
+        dpi=300,
+        bbox_inches="tight"
+       )
 
+       plt.close()
+
+    print(f"Saved {outfile}") 
+    # -----------------------------
     # QC metrics by Leiden cluster
     # -----------------------------
 
     if "leiden" in adata.obs.columns:
 
         qc_metrics = [
-           "n_fragment",
-           "tsse",
-           "frac_dup"]
+            "n_fragment",
+            "tsse",
+            "frac_dup"
+        ]
 
         fig, axes = plt.subplots(
-            1,
-            len(qc_metrics),
-            figsize=(18, 5)
-        )
+           1,
+           len(qc_metrics),
+           figsize=(18, 5)
+         )
 
         for ax, metric in zip(axes, qc_metrics):
 
             if metric in adata.obs.columns:
 
-               (
+                (
                     adata.obs
                     .groupby("leiden")[metric]
                     .median()
@@ -116,30 +130,43 @@ def main():
                     .plot(
                        kind="bar",
                        ax=ax
-                    )
+                     )
                 )
 
-               ax.set_title(f"Median {metric} per Leiden cluster")
-               ax.set_xlabel("Leiden cluster")
-               ax.set_ylabel(metric)
-               ax.tick_params(axis="x", rotation=90)
+                ax.set_title(f"Median {metric} per Leiden cluster")
+                ax.set_xlabel("Leiden cluster")
+                ax.set_ylabel(metric)
+                ax.tick_params(axis="x", rotation=90)
 
         plt.tight_layout()
 
-        outfile = os.path.join(
-          "figures",
-          f"{args.prefix}_qc_metrics_by_leiden.png"
-         )
+        outfile = os.path.join("figures", f"{args.prefix}_qc_metrics_by_leiden.png")
 
-        plt.savefig(
-         outfile,
-         dpi=300,
-         bbox_inches="tight"
-        )
+        plt.savefig(outfile, dpi=300,bbox_inches="tight")
 
         plt.close()
 
         print(f"Saved {outfile}")
+
+        sc.pl.violin(
+        adata,
+        keys=["n_fragment", "tsse", "frac_dup"],
+        groupby="leiden",
+        rotation=90,
+        multi_panel=True,
+        show =False
+        )
+
+        outfile = os.path.join(
+           "figures",
+           f"{args.prefix}_qc_violin_by_leiden.png"
+        )
+
+        plt.savefig(outfile, dpi=300, bbox_inches="tight")
+        plt.close()
+
+        print(f"Saved {outfile}")
+    
 
 if __name__ == "__main__":
     main()
