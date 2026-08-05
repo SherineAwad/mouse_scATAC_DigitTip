@@ -140,6 +140,16 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 
 ![](figures/noDoublets_after_doublet_removal_doublet_probability_vs_n_fragment.png?v=1)
 
+
+### Clustering 
+![](figures/analysis_umap_clusters.png?v=1)
+
+#### Check QC per sample 
+![](figures/analysis_umap_qc.png?v=1) 
+
+### Check QC per cluster leiden 
+![](figures/analysis_qc_metrics_by_leiden.png?v=1)
+
 ## References 
 
 SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.

@@ -43,10 +43,6 @@ def main():
     adata.layers["log1p"] = tmp.X.copy()
     del tmp
 
-    # ---- MAGIC imputation on log1p matrix ----
-    print("Running MAGIC (approximate) and storing as layer 'magic'...")
-    magic_data = sc.AnnData(X=adata.layers["log1p"].copy())
-
     # ---- Now proceed with clustering on the original tile matrix (X) ----
     print("Running spectral embedding...")
     snap.tl.spectral(adata)
@@ -61,16 +57,89 @@ def main():
     snap.tl.umap(adata)
 
     print("Generating UMAP figure...")
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(18, 8))
     sc.pl.umap(adata, color="leiden", show=False)
     outfile = os.path.join("figures", f"{args.prefix}_umap_clusters.png")
     plt.savefig(outfile, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved {outfile}")
+    
+    print("Generating QC UMAP plots...")
+
+    sc.pl.umap(
+        adata,
+        color=[
+        "leiden",
+        "sample",
+        "n_fragment",
+        "tsse",
+        "frac_dup"
+        ],
+       ncols=3,
+       show=False)
+
+    outfile = os.path.join("figures", f"{args.prefix}_umap_qc.png")
+    plt.savefig(outfile, dpi=300, bbox_inches="tight")
+    plt.close()
+
+    print(f"Saved {outfile}")
 
     print(f"Saving object to {args.output}")
     adata.write(args.output, compression="gzip")
     print("Done.")
+
+    # QC metrics by Leiden cluster
+    # -----------------------------
+
+    if "leiden" in adata.obs.columns:
+
+        qc_metrics = [
+           "n_fragment",
+           "tsse",
+           "frac_dup"]
+
+        fig, axes = plt.subplots(
+            1,
+            len(qc_metrics),
+            figsize=(18, 5)
+        )
+
+        for ax, metric in zip(axes, qc_metrics):
+
+            if metric in adata.obs.columns:
+
+               (
+                    adata.obs
+                    .groupby("leiden")[metric]
+                    .median()
+                    .sort_index()
+                    .plot(
+                       kind="bar",
+                       ax=ax
+                    )
+                )
+
+               ax.set_title(f"Median {metric} per Leiden cluster")
+               ax.set_xlabel("Leiden cluster")
+               ax.set_ylabel(metric)
+               ax.tick_params(axis="x", rotation=90)
+
+        plt.tight_layout()
+
+        outfile = os.path.join(
+          "figures",
+          f"{args.prefix}_qc_metrics_by_leiden.png"
+         )
+
+        plt.savefig(
+         outfile,
+         dpi=300,
+         bbox_inches="tight"
+        )
+
+        plt.close()
+
+        print(f"Saved {outfile}")
 
 if __name__ == "__main__":
     main()
