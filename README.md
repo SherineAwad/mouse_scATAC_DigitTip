@@ -1,4 +1,10 @@
-# scATAC mouse digit tip project - using snapATAC2 
+# scATAC mouse digit tip project - using snapATAC2
+                         _  _____  _    ____ ____  
+ ___ _ __   __ _ _ __   / \|_   _|/ \  / ___|___ \ 
+/ __| '_ \ / _` | '_ \ / _ \ | | / _ \| |     __) |
+\__ \ | | | (_| | |_) / ___ \| |/ ___ \ |___ / __/ 
+|___/_| |_|\__,_| .__/_/   \_\_/_/   \_\____|_____|
+
 
 ## Quality Control (QC) Filtering
 
