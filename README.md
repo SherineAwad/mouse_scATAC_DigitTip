@@ -150,7 +150,16 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 ![](figures/noDoublets_after_doublet_removal_doublet_probability_vs_n_fragment.png?v=1)
 
 
-### Clustering 
+## Chromatin Accessibility Profiles and Clustering 
+
+- Fragments are pieces of DNA generated from regions of the genome that were **open and accessible** in a cell.
+- Each fragment contains a **cell barcode**, allowing us to assign it back to the cell it came from.
+- For each cell, we measure **where fragments are located across the genome**.
+- This creates a **chromatin accessibility profile**: a pattern of genomic regions that are accessible in that cell.
+- Cells with **similar accessibility profiles** are grouped together computationally.
+- Similar accessibility patterns suggest that cells share similar **regulatory programs**, which can reflect the same cell type or biological state.
+- Clustering is a method to **identify these groups automatically** based on similarities in chromatin accessibility patterns.
+
 ![](figures/analysis_umap_clusters.png?v=1)
 
 #### Check QC per sample 
