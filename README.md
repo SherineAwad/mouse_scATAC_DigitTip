@@ -160,7 +160,7 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 - Similar accessibility patterns suggest that cells share similar **regulatory programs**, which can reflect the same cell type or biological state.
 - Clustering is a method to **identify these groups automatically** based on similarities in chromatin accessibility patterns.
 
-<img src="figures/analysis_umap_clusters.png?v=1" width="45%" /><img src="figures/analysis_umap_qc.png?v=1" width="45%" />
+<img src="figures/analysis_umap_clusters.png?v=1" width="45%" /><img src="figures/analysis_umap_sample.png?v=1" width="45%" />
 
 ### Check QC per cluster leiden 
 
