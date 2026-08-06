@@ -169,6 +169,14 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 <img src="figures/analysis_umap_n_fragment.png?v=1" width="30%" /><img src="figures/analysis_umap_tsse.png?v=1" width="30%" /><img src="figures/analysis_umap_frac_dup.png?v=1" width="30%" />
 
 
+### Differential Peak analyis 
+
+
+#### 1xAmp vs Control (control is our reference): 
+
+![](figures/1xAmpC_volcano.png?v=1) 
+
+
 ## References 
 
 SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.
