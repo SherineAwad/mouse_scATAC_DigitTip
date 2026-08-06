@@ -15,7 +15,7 @@ def main():
     parser.add_argument("--output", required=True, help="Output h5ad file with diff test results")
     parser.add_argument("--group1", required=True, help="Group label (sample name or cluster)")
     parser.add_argument("--group2", required=True, help="Group label (sample name or cluster)")
-    parser.add_argument("--prefix", required=True, help="Prefix for output figures")
+    parser.add_argument("--prefix", required=True, help="Prefix for output figures and CSV files")
     parser.add_argument("--pval-cutoff", type=float, default=0.05, help="Adjusted p-value cutoff (default: 0.05)")
     parser.add_argument("--logfc-cutoff", type=float, default=0.5, help="Log2 fold change cutoff (default: 0.5)")
     args = parser.parse_args()
@@ -38,7 +38,7 @@ def main():
     print(f"Group1 ({args.group1}): {len(group1_idx)} cells")
     print(f"Group2 ({args.group2}): {len(group2_idx)} cells")
 
-    # Run differential test
+    # Run differential test (solver removed)
     print("Running differential accessibility test...")
     res = snap.tl.diff_test(
         adata,
@@ -48,26 +48,36 @@ def main():
         direction="both",
         min_log_fc=args.logfc_cutoff,
         min_pct=0.05
-        # solver removed
     )
 
-    # Store results in uns
-    adata.uns["diffPeaks"] = res
+    adata.uns["diff_test"] = res
+
+    # Save all results to CSV
+    res.write_csv(f"{args.prefix}_all_results.csv")
+    print(f"Saved all results to {args.prefix}_all_results.csv")
 
     # Generate volcano plot
     print("Generating volcano plot...")
     pval_cut = args.pval_cutoff
     logfc_cut = args.logfc_cutoff
 
-    # Use correct column names: 'pvalue_adj' and 'log2_fc'
-    res_sig = res[(res["pvalue_adj"] < pval_cut) & (np.abs(res["log2_fc"]) > logfc_cut)]
-    up = res_sig[res_sig["log2_fc"] > 0]
-    down = res_sig[res_sig["log2_fc"] < 0]
+    # Correct column names from SnapATAC2 tutorial
+    pval_col = "adjusted p-value"
+    logfc_col = "log2(fold_change)"
+
+    # Filter significant results
+    res_sig = res.filter((res[pval_col] < pval_cut) & (np.abs(res[logfc_col]) > logfc_cut))
+    up = res_sig.filter(res_sig[logfc_col] > 0)
+    down = res_sig.filter(res_sig[logfc_col] < 0)
+
+    # Save significant results to CSV
+    res_sig.write_csv(f"{args.prefix}_significant_results.csv")
+    print(f"Saved significant results to {args.prefix}_significant_results.csv")
 
     plt.figure(figsize=(8, 6))
-    plt.scatter(res["log2_fc"], -np.log10(res["pvalue_adj"]), s=2, alpha=0.3, color="gray")
-    plt.scatter(up["log2_fc"], -np.log10(up["pvalue_adj"]), s=2, alpha=0.7, color="red", label=f"Group1 ({args.group1})")
-    plt.scatter(down["log2_fc"], -np.log10(down["pvalue_adj"]), s=2, alpha=0.7, color="blue", label=f"Group2 ({args.group2})")
+    plt.scatter(res[logfc_col], -np.log10(res[pval_col]), s=2, alpha=0.3, color="gray")
+    plt.scatter(up[logfc_col], -np.log10(up[pval_col]), s=2, alpha=0.7, color="red", label=f"Group1 ({args.group1})")
+    plt.scatter(down[logfc_col], -np.log10(down[pval_col]), s=2, alpha=0.7, color="blue", label=f"Group2 ({args.group2})")
     plt.axhline(y=-np.log10(pval_cut), linestyle="--", color="black", alpha=0.5, label=f"p‑adj = {pval_cut}")
     plt.axvline(x=logfc_cut, linestyle="--", color="black", alpha=0.5)
     plt.axvline(x=-logfc_cut, linestyle="--", color="black", alpha=0.5)
@@ -81,7 +91,6 @@ def main():
     plt.close()
     print(f"Saved {outfile}")
 
-    # Save final object
     print(f"Saving object to {args.output}")
     adata.write(args.output)
     print("Done.")
