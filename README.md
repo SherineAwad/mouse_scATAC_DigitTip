@@ -169,12 +169,13 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 <img src="figures/analysis_umap_n_fragment.png?v=1" width="30%" /><img src="figures/analysis_umap_tsse.png?v=1" width="30%" /><img src="figures/analysis_umap_frac_dup.png?v=1" width="30%" />
 
 
-### Differential Peak analyis 
+### Differential Peak analyis and annotations 
 
+![](figures/3xAmp_vs_1xAmp_volcano_annotated.png?v=1) 
 
-#### 1xAmp vs Control (control is our reference): 
+![](figures/5xAmp_vs_Control_volcano_annotated.png?v=1)
 
-![](figures/1xAmpC_volcano.png?v=1) 
+![](figures/5xAmp_vs_1xAmp_volcano_annotated.png?v=1)
 
 
 ## References 

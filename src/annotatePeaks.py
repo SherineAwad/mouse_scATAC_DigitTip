@@ -15,7 +15,7 @@ def main():
     parser.add_argument("--peaks", required=True, help="CSV file with peaks (must contain 'feature name' column)")
     parser.add_argument("--prefix", required=True, help="Prefix for output files")
     parser.add_argument("--dist-cutoff", type=int, default=50000, help="Distance cutoff (bp) for gene assignment (default: 50000)")
-    parser.add_argument("--n", type=int, default=20, help="Number of top genes to label on volcano plot (default: 20)")
+    parser.add_argument("--n", type=int, default=10, help="Number of top genes to label on volcano plot (default: 10)")
     args = parser.parse_args()
 
     # Load peaks from CSV
@@ -111,7 +111,7 @@ def main():
     pval_col = "adjusted p-value"
 
     if logfc_col in final_df.columns and pval_col in final_df.columns:
-        # ---- ONLY CHANGE: filter to keep rows with gene_name ----
+        # Filter to keep only peaks with gene names
         final_df_with_gene = final_df[final_df["gene_name"].notna()].copy()
         final_df_sorted = final_df_with_gene.sort_values(pval_col, ascending=True).copy()
         top_n = final_df_sorted.head(args.n)
@@ -120,10 +120,16 @@ def main():
         plt.scatter(final_df[logfc_col], -np.log10(final_df[pval_col]), s=5, alpha=0.4, color="gray")
         plt.scatter(top_n[logfc_col], -np.log10(top_n[pval_col]), s=20, alpha=0.8, color="red")
 
+        # Label top N with thinner, longer arrows
         for _, row in top_n.iterrows():
-            # gene_name is guaranteed to exist here
             label = row["gene_name"]
-            plt.text(row[logfc_col], -np.log10(row[pval_col]), label, fontsize=6, alpha=0.8)
+            x = row[logfc_col]
+            y = -np.log10(row[pval_col])
+            # Larger offset, thinner arrow
+            plt.annotate(label, xy=(x, y), xytext=(x + 0.3, y + 0.3),
+                         arrowprops=dict(facecolor='black', shrink=0.05, width=0.3, headwidth=1.5, headlength=1.5),
+                         fontsize=6, alpha=0.8,
+                         bbox=dict(boxstyle="round,pad=0.2", facecolor="white", alpha=0.7))
 
         plt.axhline(y=-np.log10(0.05), linestyle="--", color="black", alpha=0.5, label="p‑adj = 0.05")
         plt.axvline(x=0.5, linestyle="--", color="black", alpha=0.5)

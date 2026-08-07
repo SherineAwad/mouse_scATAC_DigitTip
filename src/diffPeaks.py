@@ -50,8 +50,6 @@ def main():
         min_pct=0.05
     )
 
-    adata.uns["diff_test"] = res
-
     # Save all results to CSV
     res.write_csv(f"{args.prefix}_all_results.csv")
     print(f"Saved all results to {args.prefix}_all_results.csv")
