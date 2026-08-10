@@ -179,7 +179,7 @@ AND frac_dup ≤ 0.5
 <img src="figures/analysis_umap_n_fragment.png?v=1" width="30%" /><img src="figures/analysis_umap_tsse.png?v=1" width="30%" /><img src="figures/analysis_umap_frac_dup.png?v=1" width="30%" />
 
 
-### Differential Peak analyis and annotations 
+### Differential accessible regions  analyis and annotations 
 
 Chromatin accessibility was compared between the two selected groups to identify regions with significantly different accessibility. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant. Both increases and decreases in accessibility were retained.
 
