@@ -56,7 +56,6 @@ AND 1.5 ≤ TSSe ≤ 100
 AND frac_dup ≤ 0.5
 ```
 
-```
 #### Stats
 | Sample | Cells Before Filtering | Cells After Filtering | Cells Retained (%) |
 |--------|-----------------------:|----------------------:|-------------------:|
