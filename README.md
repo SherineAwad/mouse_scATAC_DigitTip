@@ -11,44 +11,51 @@
 
 ## Quality Control (QC) Filtering
 
-Following generation of the initial QC metrics, cells are filtered to remove low-quality nuclei prior to downstream analysis. A cell is retained **only if it satisfies all of the following criteria**:
+Following generation of the initial QC metrics, cells were filtered to remove low-quality nuclei prior to downstream analysis. A cell was retained **only if it satisfied all of the following criteria**:
 
 > ##### `n_fragment`
 >
-> The total number of fragments assigned to each cell barcode, commonly used as a measure of sequencing depth per cell.
+> The total number of fragments assigned to each cell barcode, reflecting the amount of sequencing information available for each cell.
 >
-> - **Low (<1,000):** Typically indicates empty droplets, debris, or low-quality cells with insufficient data.
-> - **High (>50,000):** May indicate doublets or multiplets, but can also represent genuine high-quality cells. These cells should be inspected rather than automatically removed.
+> * **Low (<1,000):** Cells with very few fragments contain insufficient information for reliable downstream analysis and were removed.
+> * **High (>100,000):** Extremely high fragment counts can indicate potential doublets, multiplets, or other technical abnormalities. Cells above this threshold were excluded during QC. Doublets were subsequently assessed separately using a dedicated doublet-detection step.
 >
 > ##### `frac_dup`
 >
-> The fraction of fragments that are PCR duplicates (identical genomic start/end positions), used as a measure of library complexity.
+> The fraction of fragments that are PCR duplicates, used as an indicator of library complexity.
 >
-> - **Low (<0.1):** Indicates high library complexity with many unique fragments. Generally considered good quality.
-> - **High (>0.5):** Indicates low library complexity, where many fragments are duplicated PCR products. These cells contain less unique information and are typically removed.
+> * **Low:** A lower duplicate fraction indicates a higher proportion of unique fragments and generally better library complexity.
+> * **High (>0.5):** A high duplicate fraction indicates reduced library complexity, with a large proportion of fragments being duplicated. These cells were removed.
 >
 > ##### `TSSe`
 >
-> Transcription Start Site enrichment score: a per-cell measure of signal-to-noise ratio, comparing fragment enrichment around transcription start sites (TSSs) versus surrounding regions.
+> Transcription Start Site enrichment score (TSSe), a measure of the enrichment of accessible chromatin signal around transcription start sites relative to surrounding genomic regions.
 >
-> - **High (>2.0):** Indicates good signal quality, with fragments enriched around promoters. These cells generally have higher-quality chromatin accessibility data.
-> - **Low (<1.5):** Indicates poor signal quality, with weak TSS enrichment and more background noise. These cells are typically removed.
+> * **Low (<1.5):** Indicates weak TSS enrichment and lower signal quality; these cells were removed.
+> * **Higher values (>2.0):** Indicate stronger enrichment of accessible chromatin around TSSs and generally better signal quality. **Extremely high values (>100) were excluded because unusually concentrated TSS signal can represent an atypical QC profile rather than simply higher-quality data.**
 
+| Metric                                           | Filtering threshold | Purpose                                                                                                                                                                               |
+| ------------------------------------------------ | ------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Number of fragments (`n_fragment`)**           |   **1,000–100,000** | Removes cells with insufficient sequencing information and excludes cells with extremely high fragment counts that may represent potential doublets or other technical abnormalities. |
+| **Transcription Start Site Enrichment (`TSSe`)** |         **1.5–100** | Removes cells with weak TSS enrichment while excluding cells with extremely high, potentially atypical TSS enrichment profiles.                                                       |
+| **Duplicate Fragment Fraction (`frac_dup`)**     |            **≤0.5** | Removes cells with excessive PCR duplication and reduced library complexity.                                                                                                          |
 
+> > ##### Note: Library complexity
+> >
+> > **Library complexity** refers to how many **unique DNA fragments** are present in the sequencing library, rather than repeated copies of the same fragments.
+> >
+> > - **High library complexity** → many different genomic fragments → more unique information.
+> > - **Low library complexity** → many fragments are duplicates of fragments already observed → less unique information.
 
-| Metric | Threshold | Purpose |
-|--------|----------:|---------|
-| **Number of fragments (`n_fragment`)** | ≥ 1,000 and ≤ 100,000 | Removes empty droplets or poorly sequenced cells with insufficient fragments, while excluding cells with unusually high fragment counts that may represent doublets or other technical artifacts. |
-| **Transcription Start Site Enrichment (`TSSe`)** | ≥ 1.5 and ≤ 100 | Removes cells with poor enrichment of reads around transcription start sites, indicative of low-quality chromatin accessibility. The upper threshold of 100 is effectively non-restrictive and primarily serves as a safeguard against extreme outliers. |
-| **Duplicate Fragment Fraction (`frac_dup`)** | ≤ 0.5 | Excludes cells with excessive PCR duplication, which generally reflects reduced library complexity and poorer data quality. |
-
-The filtering condition applied to each cell is therefore:
+The filtering condition applied to each cell was therefore:
 
 ```text
 Keep cell if:
     1000 ≤ n_fragment ≤ 100000
 AND 1.5 ≤ TSSe ≤ 100
 AND frac_dup ≤ 0.5
+```
+
 ```
 #### Stats
 | Sample | Cells Before Filtering | Cells After Filtering | Cells Retained (%) |
@@ -59,27 +66,19 @@ AND frac_dup ≤ 0.5
 | **SINAH5** | 83,834 | 49,410 | 58.94% |
 
 
-> #### Note
+> ##### Note
 >
 > ##### `frac_dup` vs `n_fragment` Scatter Plot
 >
-> Shows how PCR duplication changes with sequencing depth per cell.
+> Shows how the PCR duplication fraction changes relative to sequencing depth per cell.
 >
 > **Purpose:**
 >
-> - **Detect low-complexity libraries:** Cells with high `frac_dup` (>0.5), especially at moderate `n_fragment`, contain many duplicated fragments and have reduced unique information.
-> - **Identify potential doublets:** Cells with very high `n_fragment` (>50k) together with elevated `frac_dup` may represent multiplets, although they require additional confirmation.
-> - **Assess data quality:** High-quality cells should maintain relatively low `frac_dup` across different fragment depths, indicating a higher proportion of unique fragments.
->
-> ##### `TSSe` vs `n_fragment` Scatter Plot
->
-> Shows how TSS enrichment changes with sequencing depth per cell.
->
-> **Purpose:**
->
-> - **Detect poor-quality cells:** Cells with high `n_fragment` but low `TSSe` (<1.5) contain many fragments but weak promoter enrichment, indicating high background noise or poor-quality nuclei. These cells are typically removed.
-> - **Assess sequencing saturation:** Good cells often show increasing `TSSe` with increasing fragment number until reaching a plateau.
-> - **Identify high-quality cells:** Cells with high `n_fragment` and high `TSSe` (top-right region) generally represent deeply sequenced, high-quality libraries and are usually retained.
+> * **Detect low-complexity libraries:** Cells with high `frac_dup` (>0.5), especially at moderate `n_fragment` values, contain an excessively high proportion of duplicated fragments and have reduced library complexity.
+> * **Visualize sequencing depth cutoffs:** Identifies cells exceeding the upper fragment limit (>100,000), which are removed to mitigate potential multiplets or other technical abnormalities before downstream doublet detection.
+> * **Assess overall library quality:** High-quality single-cell libraries generally show a stable, relatively low `frac_dup` across standard fragment depths, indicating a high proportion of unique genomic fragments.
+
+
 
 #### SINAA6
 
