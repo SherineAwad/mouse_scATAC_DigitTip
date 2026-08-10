@@ -13,26 +13,26 @@
 
 Following generation of the initial QC metrics, cells were filtered to remove low-quality nuclei prior to downstream analysis. A cell was retained **only if it satisfied all of the following criteria**:
 
-> ##### `n_fragment`
->
-> The total number of fragments assigned to each cell barcode, reflecting the amount of sequencing information available for each cell.
->
-> * **Low (<1,000):** Cells with very few fragments contain insufficient information for reliable downstream analysis and were removed.
-> * **High (>100,000):** Extremely high fragment counts can indicate potential doublets, multiplets, or other technical abnormalities. Cells above this threshold were excluded during QC. Doublets were subsequently assessed separately using a dedicated doublet-detection step.
->
-> ##### `frac_dup`
->
-> The fraction of fragments that are PCR duplicates, used as an indicator of library complexity.
->
-> * **Low:** A lower duplicate fraction indicates a higher proportion of unique fragments and generally better library complexity.
-> * **High (>0.5):** A high duplicate fraction indicates reduced library complexity, with a large proportion of fragments being duplicated. These cells were removed.
->
-> ##### `TSSe`
->
-> Transcription Start Site enrichment score (TSSe), a measure of the enrichment of accessible chromatin signal around transcription start sites relative to surrounding genomic regions.
->
-> * **Low (<1.5):** Indicates weak TSS enrichment and lower signal quality; these cells were removed.
-> * **Higher values (>2.0):** Indicate stronger enrichment of accessible chromatin around TSSs and generally better signal quality. **Extremely high values (>100) were excluded because unusually concentrated TSS signal can represent an atypical QC profile rather than simply higher-quality data.**
+##### `n_fragment`
+
+The total number of fragments assigned to each cell barcode, reflecting the amount of sequencing information available for each cell.
+
+ * **Low (<1,000):** Cells with very few fragments contain insufficient information for reliable downstream analysis and were removed.
+ * **High (>100,000):** Extremely high fragment counts can indicate potential doublets, multiplets, or other technical abnormalities. Cells above this threshold were excluded during QC. Doublets were subsequently assessed separately using a dedicated doublet-detection step.
+
+##### `frac_dup`
+
+The fraction of fragments that are PCR duplicates, used as an indicator of library complexity.
+
+* **Low:** A lower duplicate fraction indicates a higher proportion of unique fragments and generally better library complexity.
+* **High (>0.5):** A high duplicate fraction indicates reduced library complexity, with a large proportion of fragments being duplicated. These cells were removed.
+
+##### `TSSe`
+
+Transcription Start Site enrichment score (TSSe), a measure of the enrichment of accessible chromatin signal around transcription start sites relative to surrounding genomic regions.
+
+* **Low (<1.5):** Indicates weak TSS enrichment and lower signal quality; these cells were removed.
+* **Higher values (>2.0):** Indicate stronger enrichment of accessible chromatin around TSSs and generally better signal quality. **Extremely high values (>100) were excluded because unusually concentrated TSS signal can represent an atypical QC profile rather than simply higher-quality data.**
 
 | Metric                                           | Filtering threshold | Purpose                                                                                                                                                                               |
 | ------------------------------------------------ | ------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
