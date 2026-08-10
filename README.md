@@ -171,12 +171,22 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 
 ### Differential Peak analyis and annotations 
 
-![](figures/3xAmp_vs_1xAmp_volcano_annotated.png?v=1) 
 
-![](figures/5xAmp_vs_Control_volcano_annotated.png?v=1)
+#### How we calculated Peak-to-TSS annotation and picked the nearest nearby genes
+
+For each significant ATAC peak, the distance to the nearest gene is calculated from the **centre of the peak interval to the gene's transcription start site (TSS)**. We used a **50 kb distance cutoff** for gene assignment, meaning that only genes with a TSS within 50 kb of the peak centre were considered. If multiple genes have exactly the same distance to a peak, the first gene encountered is assigned. Each peak is therefore assigned to **one nearest gene within the 50 kb cutoff**.
+
+This represents our current annotation approach; **alternative peak-to-gene assignment strategies can also be considered if needed**.
+
+
+
+![](figures/3xAmp_vs_1xAmp_volcano_annotated.png?v=1) 
 
 ![](figures/5xAmp_vs_1xAmp_volcano_annotated.png?v=1)
 
+![](figures/5xAmp_vs_Control_volcano_annotated.png?v=1)
+
+###### More comparisions and analysis are ongoing 
 
 ## References 
 

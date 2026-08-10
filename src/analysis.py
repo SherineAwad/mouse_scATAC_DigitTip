@@ -48,7 +48,7 @@ def main():
     snap.tl.spectral(adata)
 
     print("Computing nearest-neighbor graph...")
-    snap.pp.knn(adata, use_rep="X_spectral")
+    snap.pp.knn(aata, use_rep="X_spectral")
 
     print("Running Leiden clustering...")
     snap.tl.leiden(adata)
