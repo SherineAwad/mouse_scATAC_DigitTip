@@ -80,6 +80,18 @@ AND frac_dup ≤ 0.5
 > * **Assess overall library quality:** High-quality single-cell libraries generally show a stable, relatively low `frac_dup` across standard fragment depths, indicating a high proportion of unique genomic fragments.
 
 
+#### Before and after filtering stats 
+
+| Sample | Stage | Cells | Median fragments | Median TSSE | Median frac_dup |
+|:---|:---|---:|---:|---:|---:|
+| **SINAA6** | Before | 83,873 | 2,963 | 2.401 | 0.574 |
+| **SINAA6** | After | 14,007 | 3,184 | 3.306 | 0.433 |
+| **SINAB6** | Before | 75,844 | 3,362 | 3.283 | 0.236 |
+| **SINAB6** | After | 63,199 | 3,730 | 3.636 | 0.245 |
+| **SINAA8** | Before | 79,172 | 3,568 | 2.479 | 0.222 |
+| **SINAA8** | After | 62,086 | 4,090 | 2.926 | 0.225 |
+| **SINAH5** | Before | 83,834 | 1,864 | 2.114 | 0.323 |
+| **SINAH5** | After | 49,410 | 2,687 | 3.087 | 0.340 |
 
 #### SINAA6
 
