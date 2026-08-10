@@ -199,7 +199,7 @@ This represents our current annotation approach; **alternative peak-to-gene assi
 
 
 #### Tope nearby genes: Gm6056, Mir365-2, Gm10800, Synpo, Gm49417, Gm16050, Gm16046, 8430430B14Rik, Parvb, Gm10432
-![](igures/3xAmp_vs_Control_volcano_annotated.png?v=1)
+![](figures/3xAmp_vs_Control_volcano_annotated.png?v=1)
 
 [click here for full list of annotated significant peaks 3XAmp vs Control](https://docs.google.com/spreadsheets/d/1WsOZu06_qlL-gwh_SGXdXy9iwrf7f7uQacFHRugWVz8/edit?usp=sharing) 
 
