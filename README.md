@@ -171,6 +171,8 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 
 ### Differential Peak analyis and annotations 
 
+Chromatin accessibility was compared between the two selected groups to identify regions with significantly different accessibility. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant. Both increases and decreases in accessibility were retained.
+
 
 #### How we calculated Peak-to-TSS annotation and picked the nearest nearby genes
 
