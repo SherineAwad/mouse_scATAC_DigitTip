@@ -173,6 +173,10 @@ A total of **179,807 cells** were initially loaded. Doublets were identified usi
 
 Chromatin accessibility was compared between the two selected groups to identify regions with significantly different accessibility. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant. Both increases and decreases in accessibility were retained.
 
+#### Direction of differential accessibility
+
+For a comparison written as **Group 1 vs Group 2**, a **positive log2 fold-change** indicates higher chromatin accessibility in **Group 1**, while a **negative log2 fold-change** indicates higher chromatin accessibility in **Group 2**. For example, in a **3xAmp vs 1xAmp** comparison, a positive log2 fold-change indicates higher accessibility in **3xAmp**, whereas a negative log2 fold-change indicates higher accessibility in **1xAmp**. Thus, the order of the groups in the comparison determines the interpretation of the direction of differential accessibility.
+
 
 #### How we calculated Peak-to-TSS annotation and picked the nearest nearby genes
 
