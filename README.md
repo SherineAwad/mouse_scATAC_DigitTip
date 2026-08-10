@@ -183,22 +183,23 @@ For each significant ATAC peak, the distance to the nearest gene is calculated f
 This represents our current annotation approach; **alternative peak-to-gene assignment strategies can also be considered if needed**.
 
 
-##### Top nearby genes: Arid3a, Ltbp4, Gm16031, ENSMUSG00002075506, Ahnak2, ENSMUSG00000121159
+##### 3xAmp vs 1xAmp - Top nearby genes: Arid3a, Ltbp4, Gm16031, ENSMUSG00002075506, Ahnak2, ENSMUSG00000121159
 
 ![](figures/3xAmp_vs_1xAmp_volcano_annotated.png?v=1) 
 [click here for full list of annotated significant peaks 3xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1SegpfMxgroVsmVbqVqLy7K9hmB0wNabDq8jmlaRP48Y/edit?usp=sharing) 
 
-##### Top nearby genes: Gtpbp4, Rn18s-rs5, ENSMUSG00002076241, Olfr431-ps1, Limd1, Ndrg1, Lgals3, Mylk2, Gm48776, Khsrp
+##### 5xAmp vs 1xAmp - Top nearby genes: Gtpbp4, Rn18s-rs5, ENSMUSG00002076241, Olfr431-ps1, Limd1, Ndrg1, Lgals3, Mylk2, Gm48776, Khsrp
 ![](figures/5xAmp_vs_1xAmp_volcano_annotated.png?v=1)
 
 [click here for full list of annotated significant peaks 5xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1A455BDEabNjRHyI3AWueVykz6jaaHqeDcAxdOwUgCRU/edit?usp=sharing) 
-#### Top nearby genes: Fmnl2, Gm37982, Med13, Dnaja3, Gm45145, Mylk2, Aig1, Gm50077, Gm44210, D630003M21Rik
+
+#### 5xAmp vs Control - Top nearby genes: Fmnl2, Gm37982, Med13, Dnaja3, Gm45145, Mylk2, Aig1, Gm50077, Gm44210, D630003M21Rik
 ![](figures/5xAmp_vs_Control_volcano_annotated.png?v=1)
 
 [click here for full list of annotated significant peaks 5xAmp vs Control](https://docs.google.com/spreadsheets/d/1Q0sx-n__Qs15Vokoe4TY2sds9Pd4-b1JngA-nthDp1c/edit?usp=sharing) 
 
 
-#### Tope nearby genes: Gm6056, Mir365-2, Gm10800, Synpo, Gm49417, Gm16050, Gm16046, 8430430B14Rik, Parvb, Gm10432
+#### 3xAmp vs Control - Top nearby genes: Gm6056, Mir365-2, Gm10800, Synpo, Gm49417, Gm16050, Gm16046, 8430430B14Rik, Parvb, Gm10432
 ![](figures/3xAmp_vs_Control_volcano_annotated.png?v=1)
 
 [click here for full list of annotated significant peaks 3XAmp vs Control](https://docs.google.com/spreadsheets/d/1WsOZu06_qlL-gwh_SGXdXy9iwrf7f7uQacFHRugWVz8/edit?usp=sharing) 
