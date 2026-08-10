@@ -64,6 +64,8 @@ AND frac_dup ≤ 0.5
 | **SINAA8** | 79,172 | 62,086 | 78.42% |
 | **SINAH5** | 83,834 | 49,410 | 58.94% |
 
+- 🚨🚨 Barcodes with TSSe ≥ 1.5 are retained provided they also demonstrate sufficient sequencing depth (≥1,000 fragments) and acceptable library complexity (frac_dup ≤ 0.5). This permissive baseline filtering strategy avoids prematurely excluding potentially informative lower-signal or quiescent cell populations. Low-quality cells are therefore identified based on the combination of QC metrics rather than a single metric in isolation, with cells failing any of the predefined criteria removed before downstream analysis.
+
 
 > ##### Note
 >
@@ -142,8 +144,6 @@ AND frac_dup ≤ 0.5
 ![](figures/noDoublets_before_doublet_removal_doublet_probability.png?v=2) 
 
 ![](figures/noDoublets_before_doublet_removal_doublet_probability_vs_n_fragment.png?v=2)
-
-A total of **179,807 cells** were initially loaded. Doublets were identified using a **doublet score cutoff of 0.5**. After filtering, **179,258 cells** remained for downstream analysis.
 
 ![](figures/noDoublets_after_doublet_removal_doublet_probability_vs_n_fragment.png?v=1)
 
