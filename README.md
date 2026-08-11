@@ -215,6 +215,14 @@ This represents our current annotation approach; **alternative region-to-gene as
 
 [click here for full list of annotated significant  3XAmp vs Control](https://docs.google.com/spreadsheets/d/1WsOZu06_qlL-gwh_SGXdXy9iwrf7f7uQacFHRugWVz8/edit?usp=sharing) 
 
+
+
+#### Differential Peak Calling and Analysis
+
+For differential peak analysis, chromatin-accessibility peaks were first identified independently in each sample using **MACS3**. The sample-specific peak sets were then merged to generate a common peak set across samples. A peak-by-cell accessibility matrix was constructed from this common peak set and used for pairwise differential testing between the selected groups. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant differential peaks. Both peaks with increased accessibility and peaks with decreased accessibility between the two groups were retained.
+
+** RESULTS COMING SOON 
+
 ###### More comparisions and analysis are ongoing 
 
 ## References 
