@@ -237,6 +237,8 @@ For differential peak analysis, chromatin-accessibility peaks were first identif
 
 #### 3xAmp vs 1xAmp
 
+**Note:** Nothing has a log2 fold-change greater than 0.5. We may need to consider lowering the cutoff here.
+
 <img src="figures/3xAmp_1xAmp_volcano.png" width="45%" /><img src="figures/3xAmp_1xAmp_volcano_annotated.png" width="45%" />
 
 [Click here to download significant 3xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1Gqf8tI94cXP0SiTNdQ0BKnHMWd-Fto2ZIstM3mZkjMI/edit?usp=sharing) 
@@ -247,10 +249,11 @@ For differential peak analysis, chromatin-accessibility peaks were first identif
 
 [Click here to download significant 5xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1zYZ4Vowub6YLh8n1-cGsKEbqN3hgL75wTdohmjGnYgk/edit?usp=sharing)
 
+##### **More comparisons are running **
 
 ## Motif Enrichment 
 
-#### More comparisions and analysis are ongoing 
+#### more analysis are ongoing 
 
 ## References 
 
