@@ -179,7 +179,7 @@ AND frac_dup ≤ 0.5
 <img src="figures/analysis_umap_n_fragment.png?v=1" width="30%" /><img src="figures/analysis_umap_tsse.png?v=1" width="30%" /><img src="figures/analysis_umap_frac_dup.png?v=1" width="30%" />
 
 
-## Differentially Accessible Region Analysis and Annotation
+## Differentially Accessible Region and Annotation
 
 Chromatin accessibility was compared between the two selected groups to identify regions with significantly different accessibility. Regions with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significantly differentially accessible. Both increases and decreases in accessibility were retained.
 
@@ -217,7 +217,7 @@ This represents our current annotation approach; **alternative region-to-gene as
 
 
 
-## Differential Peak Calling
+## Differential Peak Calling and Annotation
 
 For differential peak analysis, chromatin-accessibility peaks were first identified independently in each sample using **MACS3**. The sample-specific peak sets were then merged to generate a common peak set across samples. A peak-by-cell accessibility matrix was constructed from this common peak set and used for pairwise differential testing between the selected groups. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant differential peaks. Both peaks with increased accessibility and peaks with decreased accessibility between the two groups were retained.
 
