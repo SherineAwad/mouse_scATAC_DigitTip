@@ -241,7 +241,7 @@ For differential peak analysis, chromatin-accessibility peaks were first identif
 
 <img src="figures/3xAmp_1xAmp_volcano.png" width="45%" /><img src="figures/3xAmp_1xAmp_volcano_annotated.png" width="45%" />
 
-[Click here to download significant 3xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1Gqf8tI94cXP0SiTNdQ0BKnHMWd-Fto2ZIstM3mZkjMI/edit?usp=sharing) 
+[Click here to download all peaks -no significant- 3xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1Gqf8tI94cXP0SiTNdQ0BKnHMWd-Fto2ZIstM3mZkjMI/edit?usp=sharing) 
 
 #### 5xAmp vs 1xAmp 
 
