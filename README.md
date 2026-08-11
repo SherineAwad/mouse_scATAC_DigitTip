@@ -234,7 +234,18 @@ This represents our current annotation approach; **alternative region-to-gene as
 
 For differential peak analysis, chromatin-accessibility peaks were first identified independently in each sample using **MACS3**. The sample-specific peak sets were then merged to generate a common peak set across samples. A peak-by-cell accessibility matrix was constructed from this common peak set and used for pairwise differential testing between the selected groups. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant differential peaks. Both peaks with increased accessibility and peaks with decreased accessibility between the two groups were retained.
 
-####  RESULTS COMING SOON 
+
+#### 3xAmp vs 1xAmp
+
+<img src="figures/3xAmp_1xAmp_volcano.png" width="45%" /><img src="figures/3xAmp_1xAmp_volcano_annotated.png" width="45%" />
+
+[Click here to download significant 3xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1Gqf8tI94cXP0SiTNdQ0BKnHMWd-Fto2ZIstM3mZkjMI/edit?usp=sharing) 
+
+#### 5xAmp vs 1xAmp 
+
+<img src="figures/5xAmp_1xAmp_volcano.png" width="45%" /><img src="figures/5xAmp_1xAmp_volcano_annotated.png" width="45%" />
+
+[Click here to download significant 5xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1zYZ4Vowub6YLh8n1-cGsKEbqN3hgL75wTdohmjGnYgk/edit?usp=sharing)
 
 
 ## Motif Enrichment 
