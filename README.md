@@ -179,15 +179,15 @@ AND frac_dup ≤ 0.5
 <img src="figures/analysis_umap_n_fragment.png?v=1" width="30%" /><img src="figures/analysis_umap_tsse.png?v=1" width="30%" /><img src="figures/analysis_umap_frac_dup.png?v=1" width="30%" />
 
 
-### Differentially Accessible Region Analysis and Annotation
+## Differentially Accessible Region Analysis and Annotation
 
 Chromatin accessibility was compared between the two selected groups to identify regions with significantly different accessibility. Regions with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significantly differentially accessible. Both increases and decreases in accessibility were retained.
 
-#### Direction of differential accessibility
+### Direction of differential accessibility
 
 For a comparison written as **Group 1 vs Group 2**, a **positive log2 fold-change** indicates higher chromatin accessibility in **Group 1**, while a **negative log2 fold-change** indicates higher chromatin accessibility in **Group 2**. For example, in a **3xAmp vs 1xAmp** comparison, a positive log2 fold-change indicates higher accessibility in **3xAmp**, whereas a negative log2 fold-change indicates higher accessibility in **1xAmp**. Thus, the order of the groups in the comparison determines the interpretation of the direction of differential accessibility.
 
-#### Differentially Accessible Region-to-TSS Annotation and Nearest Gene Assignment
+### Differentially Accessible Region-to-TSS Annotation and Nearest Gene Assignment
 
 For each significant **differentially accessible region (DAR)**, the distance to the nearest gene was calculated from the **centre of the genomic region to the gene's transcription start site (TSS)**. A **50 kb distance cutoff** was used for gene assignment, meaning that only genes with a TSS within 50 kb of the centre of the DAR were considered. If multiple genes had exactly the same distance to a DAR, the first gene encountered was assigned. Each DAR was therefore assigned to **one nearest gene within the 50 kb cutoff**.
 
@@ -217,13 +217,13 @@ This represents our current annotation approach; **alternative region-to-gene as
 
 
 
-#### Differential Peak Calling and Analysis
+## Differential Peak Calling and Analysis
 
 For differential peak analysis, chromatin-accessibility peaks were first identified independently in each sample using **MACS3**. The sample-specific peak sets were then merged to generate a common peak set across samples. A peak-by-cell accessibility matrix was constructed from this common peak set and used for pairwise differential testing between the selected groups. Peaks with an **absolute log2 fold-change > 0.5** and an **adjusted p-value < 0.05** were considered significant differential peaks. Both peaks with increased accessibility and peaks with decreased accessibility between the two groups were retained.
 
-** RESULTS COMING SOON 
+####  RESULTS COMING SOON 
 
-###### More comparisions and analysis are ongoing 
+#### More comparisions and analysis are ongoing 
 
 ## References 
 
