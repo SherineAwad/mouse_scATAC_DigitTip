@@ -179,9 +179,9 @@ AND frac_dup ≤ 0.5
 <img src="figures/analysis_umap_n_fragment.png?v=1" width="30%" /><img src="figures/analysis_umap_tsse.png?v=1" width="30%" /><img src="figures/analysis_umap_frac_dup.png?v=1" width="30%" />
 
 
-## Chromatin Accessibility: Fixed-Grid (DAR) vs. Peak-Based Differential Analysis
+## Chromatin Accessibility: Tile-Based (DAR) vs. Peak-Based Differential Analysis
 
-When comparing chromatin accessibility between biological groups, we analyze the data through two distinct conceptual lenses: **Fixed-Grid (Tile-based)** or **Peak-Based** analysis.
+When comparing chromatin accessibility between biological groups, we analyze the data through two distinct conceptual lenses: **Tile-based** or **Peak-Based** analysis.
 
 The Fixed-Grid approach overlays a rigid, uniform grid of predefined genomic windows (e.g., 500-bp tiles) across the genome to quantify fragment signal independently of whether the region was previously identified as an accessible feature. While fixed tiles avoid peak-calling selection bias, they do not automatically eliminate other systematic biases such as differences in sequencing depth, library quality, cell composition, or coverage. This strategy retains genomic regions regardless of whether they were called accessible beforehand, allowing subtle or broad changes to be tested without requiring prior feature detection. However, the boundary problem is real when a biological signal crosses tile borders, which, depending on tile size, can dilute the signal and affect the ability to detect group differences.
 
