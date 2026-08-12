@@ -285,6 +285,9 @@ By default, the plot displays up to 20 motifs: the top 10 enriched and the top 1
 #### 3xAmp vs 1xAmp 
 <img src="figures/motifs_3xAmp_1xAmp_gain_motif_enrichment.png" width="45%" />
 
+> **📌 Note:** No loss-associated motifs passed both filtering criteria (high motif log2FC and significant adjusted p-value). More candidate motifs could be identified either by relaxing the thresholds for these criteria or by applying only one criterion (high log2FC or significant adjusted p-value) instead of requiring both.
+
+
 [Click here for full list of gain motif enrichment in 3xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1h9ZL9G-ygW5QEN7ZvasgMS3CVQN0nKcp80bzHyfUerM/edit?usp=sharing) 
 
 [Click here for full list of loss motif enrichment in 3xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1dKD9lJdsKxvOP5PZtkyFM_EeB_-o05tXHPzyrimiDuA/edit?usp=sharing) 
