@@ -1,0 +1,49 @@
+# Environment
+conda_env: squidpy
+
+# Temporary directory
+tmpdir: /rds/project/rds-ivbvKVT8GC0/scATAC/tmp
+
+# Sample information
+samples_file: samples.txt
+
+samples:
+  - SINAA6
+  - SINAA8
+  - SINAB6
+  - SINAH5
+
+# Differential peak comparisons
+comparisons:
+  - name: 1xAmp_vs_Control
+    group1: 1xAmp
+    group2: control
+
+  - name: 3xAmp_vs_Control
+    group1: 3xAmp
+    group2: control
+
+  - name: 5xAmp_vs_Control
+    group1: 5xAmp
+    group2: control
+
+  - name: 3xAmp_vs_1xAmp
+    group1: 3xAmp
+    group2: 1xAmp
+
+  - name: 5xAmp_vs_1xAmp
+    group1: 5xAmp
+    group2: 1xAmp
+
+# Annotation
+annotate:
+  - 3xAmp_vs_1xAmp
+  - 5xAmp_vs_1xAmp
+  - 1xAmp_vs_Control
+  - 3xAmp_vs_Control
+  - 5xAmp_vs_Control
+
+# Motif enrichment
+motif:
+  - 3xAmp_vs_1xAmp
+  - 5xAmp_vs_1xAmp
