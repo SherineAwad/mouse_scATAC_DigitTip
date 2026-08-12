@@ -283,7 +283,7 @@ The top motifs are selected separately for positive and negative log2 fold chang
 By default, the plot displays up to 20 motifs: the top 10 enriched and the top 10 depleted motifs.
 
 #### 3xAmp vs 1xAmp 
-<img src="figures/motifs_3xAmp_1xAmp_gain_motif_enrichment.png" width="45%" /><img src="figures/motifs_3xAmp_1xAmp_loss_motif_enrichment.png" width="45%" />
+<img src="figures/motifs_3xAmp_1xAmp_gain_motif_enrichment.png" width="45%" />
 
 [Click here for full list of gain motif enrichment in 3xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1h9ZL9G-ygW5QEN7ZvasgMS3CVQN0nKcp80bzHyfUerM/edit?usp=sharing) 
 
