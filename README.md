@@ -296,10 +296,14 @@ By default, the plot displays up to 20 motifs: the top 10 enriched and the top 1
 
 [Click here for full list of loss motif enrichment in 5xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1H3fnYHYjGWIhtghSeK1qWCZoeT2I21nUc_5AtAuKhuE/edit?usp=sharing) 
 
+#### 📌 **Note:** The **SP family** is mentioned in **Brown et al. (2026) [2]**.
 
 ### more analysis are ongoing 
 
 ## References 
 
-SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.
+1. SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.
+
+2. Brown, D. A., Koll, K. K., Brush, E., Darner, G., Curtis Jr, T., Dvergsten, T., ... & Poss, K. D. (2026). Enhancer-directed gene delivery for digit regeneration based on conserved epidermal factors. Proceedings of the National Academy of Sciences, 123(17), e2532804123. 
+
 
