@@ -299,7 +299,7 @@ By default, the plot displays up to 20 motifs: the top 10 enriched and the top 1
 
 [Click here for full list of loss motif enrichment in 5xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1H3fnYHYjGWIhtghSeK1qWCZoeT2I21nUc_5AtAuKhuE/edit?usp=sharing) 
 
-#### 📌 **Note:** The **SP family** is mentioned in **Brown et al. (2026) [2]**.
+> ### 📌 **Note:** The **SP family** is mentioned in **Brown et al. (2026) [2]**.
 
 ### more analysis are ongoing 
 
