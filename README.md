@@ -237,7 +237,7 @@ For differential peak analysis, chromatin-accessibility peaks were first identif
 
 #### 3xAmp vs 1xAmp
 
-**Note:** Nothing has an absolute log2 fold-change greater than 0.5. We may need to consider lowering the cutoff here.
+** ⚡⚡⚡ Note:** Nothing has an absolute log2 fold-change greater than 0.5. We may need to consider lowering the cutoff here.
 
 <img src="figures/3xAmp_1xAmp_volcano.png" width="45%" /><img src="figures/3xAmp_1xAmp_volcano_annotated.png" width="45%" />
 
