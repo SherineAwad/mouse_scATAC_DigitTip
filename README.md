@@ -249,11 +249,55 @@ For differential peak analysis, chromatin-accessibility peaks were first identif
 
 [Click here to download significant 5xAmp vs 1xAmp annotated peaks](https://docs.google.com/spreadsheets/d/1zYZ4Vowub6YLh8n1-cGsKEbqN3hgL75wTdohmjGnYgk/edit?usp=sharing)
 
-##### **More comparisons are running **
+**More comparisons is running** 
 
-## Motif Enrichment 
+## Motif Enrichment
 
-#### more analysis are ongoing 
+Motif enrichment asks whether a transcription-factor binding motif is found more or less frequently in a set of peaks than expected based on a background set of peaks.
+
+For this analysis:
+
+Gain peaks → peaks with log2FC > 0.25 and adjusted p-value < 0.05. Motif frequency is compared with all tested peaks.
+Loss peaks → peaks with log2FC < -0.25 and adjusted p-value < 0.05. Motif frequency is compared with all tested peaks.
+
+#### ⚡⚡⚡ Note: we relaxed cutoff above  
+
+A positive motif log2 fold change indicates motif enrichment, while a negative motif log2 fold change indicates motif depletion. The adjusted p-value indicates whether the observed difference is statistically significant after multiple-testing correction.
+
+### Motif ranking for plotting
+
+Only motifs with an adjusted p-value below the specified significance threshold are considered for plotting.
+
+Motifs are then ranked using a combined score that accounts for both statistical significance and effect size:
+
+**Ranking score = −log10(adjusted p-value) × |log2(fold change)|**
+
+This means motifs are prioritised when they have:
+- a smaller adjusted p-value (stronger statistical significance), and
+- a larger absolute log2 fold change (stronger enrichment or depletion).
+
+The top motifs are selected separately for positive and negative log2 fold changes:
+- **Enriched motifs:** positive log2 fold change
+- **Depleted motifs:** negative log2 fold change
+
+By default, the plot displays up to 20 motifs: the top 10 enriched and the top 10 depleted motifs.
+
+#### 3xAmp vs 1xAmp 
+<img src="figures/motifs_3xAmp_1xAmp_gain_motif_enrichment.png" width="45%" /><img src="figures/motifs_3xAmp_1xAmp_loss_motif_enrichment.png" width="45%" />
+
+[Click here for full list of gain motif enrichment in 3xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1h9ZL9G-ygW5QEN7ZvasgMS3CVQN0nKcp80bzHyfUerM/edit?usp=sharing) 
+
+[Click here for full list of loss motif enrichment in 3xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1dKD9lJdsKxvOP5PZtkyFM_EeB_-o05tXHPzyrimiDuA/edit?usp=sharing) 
+
+#### 5xAmp vs 1xAmp 
+<img src="figures/motifs_5xAmp_1xAmp_gain_motif_enrichment.png" width="45%" /><img src="figures/motifs_5xAmp_1xAmp_loss_motif_enrichment.png" width="45%" />
+
+[Click here for full list of gain motif enrichment in 5xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1keqU9BoxErxXQSyNZkjLq2pMAxCm19zLHxlgCaXDiYE/edit?usp=sharing)
+
+[Click here for full list of loss motif enrichment in 5xAmp vs 1xAmp](https://docs.google.com/spreadsheets/d/1H3fnYHYjGWIhtghSeK1qWCZoeT2I21nUc_5AtAuKhuE/edit?usp=sharing) 
+
+
+### more analysis are ongoing 
 
 ## References 
 
