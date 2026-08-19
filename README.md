@@ -342,7 +342,11 @@ While gene activity inference works well for standalone scATAC-seq, **true multi
 * **Elimination of Self-Correlation:** Because RNA and DNA accessibility are measured via two independent assays, promoter peaks and gene expression are completely decoupled, eliminating self-correlation bias without requiring artificial distance dropouts.
 * **True Functional Dynamics:** Multiomics captures true temporal dynamics—such as an enhancer opening *before* transcription begins—whereas scATAC-based gene activity simply compares chromatin openness against chromatin openness.
 
-<img src="figures/5xAmp_1xAmp_peak_gene_correlation.png?v=1" width="45%" /><img src="figures/3xAmp_1xAmp_peak_gene_correlation.png?v=1" width="45%" />
+###### 5xAmp_1xAmp
+![](figures/5xAmp_1xAmp_peak_gene_correlation.png?v=1)
+
+##### 3xAmp_1xAmp
+![](figures/3xAmp_1xAmp_peak_gene_correlation.png?v=1)
 
 ## More analysis 
 
