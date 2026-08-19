@@ -257,8 +257,8 @@ Motif enrichment asks whether a transcription-factor binding motif is found more
 
 For this analysis:
 
-Gain peaks → peaks with log2FC > 0.25 and adjusted p-value < 0.05. Motif frequency is compared with all tested peaks.
-Loss peaks → peaks with log2FC < -0.25 and adjusted p-value < 0.05. Motif frequency is compared with all tested peaks.
+- Gain peaks → peaks with log2FC > 0.25 and adjusted p-value < 0.05. Motif frequency is compared with all tested peaks.
+- Loss peaks → peaks with log2FC < -0.25 and adjusted p-value < 0.05. Motif frequency is compared with all tested peaks.
 
 #### ⚡⚡⚡ Note: we relaxed cutoff above  
 
@@ -301,7 +301,59 @@ By default, the plot displays up to 20 motifs: the top 10 enriched and the top 1
 
 > ### 📌 **Note:** The **SP family** is mentioned in **Brown et al. (2026) [2]**.
 
-### more analysis are ongoing 
+
+## Gene Linkage
+
+Gene linkage connects candidate regulatory peaks to genes in two distinct stages. First, genomic location is used to identify eligible peak–gene pairs: peaks that fall within a specified regulatory window around a gene's Transcription Start Site (TSS)—typically up to $\pm 100\text{ kb}$—are defined as candidate regulatory elements.
+
+The crucial difference between gene linkage and simple nearby-gene annotation lies in what happens **after** this initial spatial filtering. Gene linkage does not blindly assign a peak to the nearest gene by distance alone. Instead, for every candidate peak–gene pair, the chromatin accessibility of the peak across single cells is correlated with the activity of the gene across those same cells.
+
+Specifically, the analysis tests whether:
+
+> **Cells with higher accessibility at a candidate peak also tend to exhibit higher (or lower) activity of the candidate gene.**
+
+This statistical co-accessibility provides empirical evidence for a functional regulatory relationship beyond simple genomic proximity.
+
+### Understanding Gene Activity in Standalone scATAC-Seq
+
+Because standalone scATAC-seq measures open chromatin rather than direct messenger RNA (mRNA) transcripts, **gene expression cannot be measured directly**. Instead, it is computationally inferred as a **Gene Activity Score**:
+
+1. **Summing Locus Reads:** For each gene, all scATAC-seq fragments falling within the gene body and its promoter region are aggregated for every single cell.
+2. **Estimating Expression:** This total accessibility value acts as a surrogate proxy for gene activity, assuming that a more open gene locus correlates with higher transcription.
+
+### The Promoter Self-Correlation Bias
+
+A potential bias arises when **Gene Activity Scores** are calculated using ATAC-seq fragments from both the promoter and gene body, and these scores are then correlated with the accessibility of promoter peaks.
+
+This creates a **part-versus-whole correlation**:
+
+- **The "Part":** ATAC-seq fragments within the promoter peak.
+- **The "Whole":** The Gene Activity Score, which already includes those same promoter fragments.
+
+Because the promoter fragments contribute directly to the Gene Activity Score, the promoter peak and the gene activity measure are mathematically dependent. This can produce an artificially strong positive correlation, even when there is no evidence that the promoter accessibility is specifically associated with the gene's regulatory activity.
+
+To prevent this self-correlation bias, an explicit **TSS exclusion zone** is applied. Peaks located within **±2 kb of the Transcription Start Site (TSS)** are excluded from the correlation analysis. Crucially, to avoid over-excluding valid regulatory elements, this TSS distance check is restricted strictly to **protein-coding genes** (matching the candidate target gene set). This ensures true promoter regions are removed while preserving distal enhancers that happen to sit near non-coding elements (such as lncRNAs or pseudogenes), allowing the analysis to focus accurately on genuine **distal regulatory elements**.
+
+### Why Single-Cell Multiomics (Joint RNA + ATAC) is Superior
+
+While gene activity inference works well for standalone scATAC-seq, **true multiomics (simultaneous scRNA-seq and scATAC-seq from the exact same physical cell)** offers major biological and technical advantages:
+
+* **Direct Transcript Measurement:** Multiomics correlates peak accessibility directly with **real mRNA expression** rather than an inferred proxy score derived from chromatin reads.
+* **Elimination of Self-Correlation:** Because RNA and DNA accessibility are measured via two independent assays, promoter peaks and gene expression are completely decoupled, eliminating self-correlation bias without requiring artificial distance dropouts.
+* **True Functional Dynamics:** Multiomics captures true temporal dynamics—such as an enhancer opening *before* transcription begins—whereas scATAC-based gene activity simply compares chromatin openness against chromatin openness.
+
+<img src="figures/5xAmp_1xAmp_peak_gene_correlation.png?v=1" width="45%" /><img src="figures/3xAmp_1xAmp_peak_gene_correlation.png?v=1" width="45%" />
+
+## More analysis 
+
+```text 
+ ___         ____                                    
+|_ _|_ __   |  _ \ _ __ ___   __ _ _ __ ___  ___ ___ 
+ | || '_ \  | |_) | '__/ _ \ / _` | '__/ _ \/ __/ __|
+ | || | | | |  __/| | | (_) | (_| | | |  __/\__ \__ \
+|___|_| |_| |_|   |_|  \___/ \__, |_|  \___||___/___/
+                             |___/                   
+```  
 
 ## References 
 

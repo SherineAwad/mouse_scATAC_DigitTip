@@ -1,45 +1,95 @@
 #!/usr/bin/env python3
 
 import argparse
+import gzip
 import os
 import pickle
-
 import numpy as np
 import snapatac2 as snap
 
 
 def convert_to_float32(adata, label):
-
     print()
-    print(
-        f"Loading {label} matrix into memory..."
-    )
-
+    print(f"Loading {label} matrix into memory...")
     adata_mem = adata.to_memory()
 
-    print(
-        f"{label} matrix loaded into memory."
-    )
+    # Use log1p layer if available to ensure correlation runs on normalized values
+    if "log1p" in adata_mem.layers:
+        print(f"Assigning 'log1p' layer to .X for {label} matrix...")
+        adata_mem.X = adata_mem.layers["log1p"].copy()
 
-    print(
-        f"{label} matrix type: {type(adata_mem.X)}"
-    )
+    print(f"{label} matrix loaded into memory.")
+    print(f"{label} matrix type: {type(adata_mem.X)}")
+    print(f"{label} matrix dtype before conversion: {adata_mem.X.dtype}")
 
-    print(
-        f"{label} matrix dtype before conversion: "
-        f"{adata_mem.X.dtype}"
-    )
+    if adata_mem.X.dtype != np.float32:
+        adata_mem.X = adata_mem.X.astype(np.float32, copy=False)
 
-    adata_mem.X = adata_mem.X.astype(
-        np.float32
-    )
-
-    print(
-        f"{label} matrix dtype after conversion: "
-        f"{adata_mem.X.dtype}"
-    )
-
+    print(f"{label} matrix dtype after conversion: {adata_mem.X.dtype}")
     return adata_mem
+
+
+def exclude_promoter_peaks(peak_regions, exclude_bp=2000):
+    """
+    Excludes peaks falling within +/- exclude_bp of protein-coding gene TSS coordinates.
+    """
+    print(f"Excluding peaks within +/- {exclude_bp} bp of protein-coding TSS...")
+
+    # Extract TSS positions from mm39 gene annotation for protein-coding genes only
+    anno_path = str(snap.genome.mm39.annotation)
+    tss_dict = {}
+
+    open_fn = gzip.open if anno_path.endswith(".gz") else open
+    with open_fn(anno_path, "rt") as f:
+        for line in f:
+            if line.startswith("#"):
+                continue
+            parts = line.strip().split("\t")
+            if len(parts) >= 9 and parts[2] == "gene":
+                attributes = parts[8]
+                # Match protein-coding genes to stay consistent with coding_gene_only=True
+                if "protein_coding" in attributes:
+                    chrom = parts[0]
+                    start = int(parts[3])
+                    end = int(parts[4])
+                    strand = parts[6]
+                    tss = start if strand in ["+", "1"] else end
+                    if chrom not in tss_dict:
+                        tss_dict[chrom] = []
+                    tss_dict[chrom].append(tss)
+
+    # Convert TSS lists to sorted numpy arrays for fast binary search
+    for chrom in tss_dict:
+        tss_dict[chrom] = np.array(sorted(tss_dict[chrom]))
+
+    filtered_peaks = []
+    excluded_count = 0
+
+    for peak in peak_regions:
+        try:
+            chrom, coords = peak.split(":")
+            p_start, p_end = map(int, coords.split("-"))
+            p_mid = (p_start + p_end) // 2
+
+            if chrom in tss_dict:
+                idx = np.searchsorted(tss_dict[chrom], p_mid)
+                distances = []
+                if idx < len(tss_dict[chrom]):
+                    distances.append(abs(tss_dict[chrom][idx] - p_mid))
+                if idx > 0:
+                    distances.append(abs(tss_dict[chrom][idx - 1] - p_mid))
+
+                if min(distances) <= exclude_bp:
+                    excluded_count += 1
+                    continue
+
+            filtered_peaks.append(peak)
+        except Exception as e:
+            raise ValueError(f"Failed to parse peak string '{peak}': {e}")
+
+    print(f"Excluded {excluded_count} promoter-proximal peaks.")
+    print(f"Remaining candidate distal peaks: {len(filtered_peaks)}")
+    return filtered_peaks
 
 
 def main():
@@ -52,49 +102,47 @@ def main():
     )
 
     parser.add_argument(
-        "--input",
-        required=True,
-        help="Peak-by-cell H5AD file."
+        "--input", required=True, help="Peak-by-cell H5AD file."
     )
 
     parser.add_argument(
-        "--gene_matrix",
-        required=True,
-        help="Cell-by-gene activity H5AD file."
-    )
-
-    parser.add_argument(
-        "--output",
-        required=True,
-        help="Output H5AD file."
+        "--gene_matrix", required=True, help="Cell-by-gene activity H5AD file."
     )
 
     parser.add_argument(
         "--prefix",
-        required=True,
-        help="Prefix for output files."
+        required=False,
+        default=None,
+        help="Prefix for output network file. If omitted, derives from --output.",
     )
+
+    parser.add_argument("--output", required=True, help="Output H5AD file.")
 
     parser.add_argument(
         "--upstream",
         type=int,
         default=100000,
-        help="Distance upstream of TSS. Default: 100000 bp."
+        help="Distance upstream of TSS. Default: 100000 bp.",
     )
 
     parser.add_argument(
         "--downstream",
         type=int,
         default=100000,
-        help="Distance downstream of TSS. Default: 100000 bp."
+        help="Distance downstream of TSS. Default: 100000 bp.",
+    )
+
+    parser.add_argument(
+        "--exclude-promoter-bp",
+        type=int,
+        default=2000,
+        help="Exclusion window around TSS in bp. Default: 2000 (+/- 2kb).",
     )
 
     args = parser.parse_args()
 
-    os.makedirs(
-        "figures",
-        exist_ok=True
-    )
+    # Determine prefix
+    prefix = args.prefix if args.prefix else os.path.splitext(args.output)[0]
 
     # ------------------------------------------------------------
     # 1. Load peak matrix
@@ -104,9 +152,7 @@ def main():
     print("Loading peak matrix...")
     print(f"Input: {args.input}")
 
-    peak_mat = snap.read(
-        args.input
-    )
+    peak_mat = snap.read(args.input, backed="r")
 
     print(
         f"Peak matrix: "
@@ -122,9 +168,7 @@ def main():
     print("Loading gene activity matrix...")
     print(f"Gene matrix: {args.gene_matrix}")
 
-    gene_mat = snap.read(
-        args.gene_matrix
-    )
+    gene_mat = snap.read(args.gene_matrix, backed="r")
 
     print(
         f"Gene matrix: "
@@ -133,86 +177,59 @@ def main():
     )
 
     # ------------------------------------------------------------
-    # 3. Check cell identities before conversion
+    # 3. Check cell identities and subset gene matrix
     # ------------------------------------------------------------
 
     print()
     print("Checking cell identities...")
 
-    peak_cells = list(
-        peak_mat.obs_names
-    )
+    # Load into memory and resolve duplicate barcodes
+    peak_mat_mem = peak_mat.to_memory()
+    gene_mat_mem = gene_mat.to_memory()
 
-    gene_cells = list(
-        gene_mat.obs_names
-    )
+    peak_mat_mem.obs_names_make_unique()
+    gene_mat_mem.obs_names_make_unique()
 
-    peak_cell_set = set(
-        peak_cells
-    )
+    peak_cells = list(peak_mat_mem.obs_names)
+    gene_obs_names = list(gene_mat_mem.obs_names)
 
-    gene_cell_set = set(
-        gene_cells
-    )
+    gene_cell_dict = {name: idx for idx, name in enumerate(gene_obs_names)}
 
-    if peak_cell_set != gene_cell_set:
-
-        missing_from_gene = (
-            peak_cell_set - gene_cell_set
-        )
-
-        missing_from_peak = (
-            gene_cell_set - peak_cell_set
-        )
-
+    missing_cells = [cell for cell in peak_cells if cell not in gene_cell_dict]
+    if len(missing_cells) > 0:
         raise ValueError(
-            "Peak matrix and gene matrix do not contain "
-            "the same cells.\n"
-            f"Cells in peak matrix but missing from gene matrix: "
-            f"{len(missing_from_gene)}\n"
-            f"Cells in gene matrix but missing from peak matrix: "
-            f"{len(missing_from_peak)}"
+            "Peak matrix contains cells missing from gene matrix.\n"
+            f"Cells missing: {len(missing_cells)}"
         )
-
-    if peak_cells != gene_cells:
-
-        print(
-            "Cell sets match but cell order differs."
-        )
-
-        print(
-            "Reordering gene matrix to match peak matrix..."
-        )
-
-        gene_mat = gene_mat[
-            peak_cells,
-            :
-        ].copy()
 
     print(
-        "Cell identities and order match."
+        f"Subsetting gene matrix from {len(gene_obs_names)} cells "
+        f"to match {len(peak_cells)} peak cells..."
     )
 
+    # Slice by positional integer indices
+    target_indices = [gene_cell_dict[cell] for cell in peak_cells]
+    gene_mat = gene_mat_mem[target_indices, :].copy()
+    peak_mat = peak_mat_mem
+
+    print("Cell identities successfully matched and ordered.")
+
     # ------------------------------------------------------------
-    # 4. Read peak coordinates
+    # 4. Read peak coordinates & Exclude +/- 2kb Promoter Regions
     # ------------------------------------------------------------
 
     print()
     print("Reading peak coordinates...")
 
-    peak_regions = list(
-        peak_mat.var_names
-    )
+    peak_regions = list(peak_mat.var_names)
 
     if len(peak_regions) == 0:
+        raise ValueError("Peak matrix contains no peaks.")
 
-        raise ValueError(
-            "Peak matrix contains no peaks."
-        )
+    print(f"Total input regions: {len(peak_regions)}")
 
-    print(
-        f"Candidate regulatory regions: "
-        f"{len(peak_regions)}"
+    distal_peak_regions = exclude_promoter_peaks(
+        peak_regions, exclude_bp=args.exclude_promoter_bp
     )
 
     # ------------------------------------------------------------
@@ -220,129 +237,71 @@ def main():
     # ------------------------------------------------------------
 
     print()
-    print(
-        "Building peak-to-gene candidate network..."
-    )
-
-    print(
-        "Genome annotation: mm39"
-    )
-
-    print(
-        f"Upstream distance: "
-        f"{args.upstream} bp"
-    )
-
-    print(
-        f"Downstream distance: "
-        f"{args.downstream} bp"
-    )
+    print("Building peak-to-gene candidate network...")
+    print("Genome annotation: mm39")
+    print(f"Upstream distance: {args.upstream} bp")
+    print(f"Downstream distance: {args.downstream} bp")
 
     network = snap.tl.init_network_from_annotation(
-        regions=peak_regions,
+        regions=distal_peak_regions,
         anno_file=snap.genome.mm39,
         upstream=args.upstream,
         downstream=args.downstream,
         id_type="gene_name",
-        coding_gene_only=True
+        coding_gene_only=True,
     )
 
-    print(
-        f"Network nodes: "
-        f"{network.num_nodes()}"
-    )
-
-    print(
-        f"Network edges: "
-        f"{network.num_edges()}"
-    )
+    print(f"Network nodes: {network.num_nodes()}")
+    print(f"Network edges: {network.num_edges()}")
 
     # ------------------------------------------------------------
     # 6. Convert backed CSR uint32 matrices to in-memory float32
     # ------------------------------------------------------------
 
-    peak_mat_float = convert_to_float32(
-        peak_mat,
-        "Peak"
-    )
-
-    gene_mat_float = convert_to_float32(
-        gene_mat,
-        "Gene"
-    )
+    peak_mat_float = convert_to_float32(peak_mat, "Peak")
+    gene_mat_float = convert_to_float32(gene_mat, "Gene")
 
     # ------------------------------------------------------------
     # 7. Calculate peak-gene correlation scores
     # ------------------------------------------------------------
 
     print()
-    print(
-        "Calculating peak-gene correlation scores..."
-    )
+    print("Calculating peak-gene correlation scores...")
 
     snap.tl.add_cor_scores(
         network,
         peak_mat=peak_mat_float,
         gene_mat=gene_mat_float,
-        overwrite=True
+        overwrite=True,
     )
 
-    print(
-        "Correlation scores calculated."
-    )
+    print("Correlation scores calculated.")
 
     # ------------------------------------------------------------
-    # 8. Save network
+    # 8. Save peak-gene network as PKL
     # ------------------------------------------------------------
+
+    network_output = f"{prefix}_network.pkl"
 
     print()
-    print(
-        "Saving linkage network..."
-    )
+    print(f"Saving peak-gene network: {network_output}")
 
-    network_file = (
-        f"{args.prefix}_network.pkl"
-    )
+    with open(network_output, "wb") as f:
+        pickle.dump(network, f)
 
-    with open(
-        network_file,
-        "wb"
-    ) as f:
-
-        pickle.dump(
-            network,
-            f
-        )
-
-    print(
-        f"Saved network: {network_file}"
-    )
+    print(f"Saved network: {network_output}")
 
     # ------------------------------------------------------------
     # 9. Save output H5AD
     # ------------------------------------------------------------
 
     print()
-    print(
-        f"Saving output H5AD: {args.output}"
-    )
+    print(f"Saving output H5AD: {args.output}")
 
-    peak_mat_float.write(
-        args.output
-    )
+    peak_mat_float.write(args.output)
 
-    print(
-        f"Saved: {args.output}"
-    )
-
-    # ------------------------------------------------------------
-    # 10. Done
-    # ------------------------------------------------------------
-
-    print()
-    print(
-        "Gene linkage analysis complete."
-    )
+    print(f"Saved: {args.output}")
+    print("Gene linkage analysis complete.")
 
 
 if __name__ == "__main__":

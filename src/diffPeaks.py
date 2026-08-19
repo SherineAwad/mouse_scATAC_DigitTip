@@ -321,7 +321,10 @@ def main():
         f"Saving peak matrix to {args.output}"
     )
 
-    peak_mat.write(args.output)
+    contrast_cells = np.concatenate([group1_idx, group2_idx])
+    peak_mat_out = peak_mat[contrast_cells, :].copy()
+
+    peak_mat_out.write(args.output)
 
     print("Done.")
 
