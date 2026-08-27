@@ -348,16 +348,20 @@ While gene activity inference works well for standalone scATAC-seq, **true multi
 ##### 3xAmp_1xAmp
 ![](figures/3xAmp_1xAmp_peak_gene_correlation.png?v=1)
 
-## More analysis 
 
 ```text 
- ___         ____                                    
-|_ _|_ __   |  _ \ _ __ ___   __ _ _ __ ___  ___ ___ 
+ ___         ____
+|_ _|_ __   |  _ \ _ __ ___   __ _ _ __ ___  ___ ___
  | || '_ \  | |_) | '__/ _ \ / _` | '__/ _ \/ __/ __|
  | || | | | |  __/| | | (_) | (_| | | |  __/\__ \__ \
 |___|_| |_| |_|   |_|  \___/ \__, |_|  \___||___/___/
-                             |___/                   
-```  
+                             |___/
+```
+
+## Footprinting using TOBIAS
+
+Footprinting looks at the Tn5 cuts around a transcription factor binding motif. If the TF is bound to the motif, it physically protects that DNA from Tn5. Therefore, Tn5 can cut the DNA around the TF but not directly where the TF is sitting. We can trace this by looking at the Tn5 coverage across the region: we expect relatively high coverage on either side of the motif and a drop in coverage directly over the motif. This characteristic dip in the coverage is the TF footprint, and it provides evidence that the TF may be bound at that motif.
+ 
 
 ## References 
 
@@ -365,4 +369,5 @@ While gene activity inference works well for standalone scATAC-seq, **true multi
 
 2. Brown, D. A., Koll, K. K., Brush, E., Darner, G., Curtis Jr, T., Dvergsten, T., ... & Poss, K. D. (2026). Enhancer-directed gene delivery for digit regeneration based on conserved epidermal factors. Proceedings of the National Academy of Sciences, 123(17), e2532804123. 
 
-
+3. Bentsen, M., Goymann, P., Schultheis, H., Klee, K., Petrova, A., Wiegandt, R., ... & Looso, M. (2020). ATAC-seq footprinting unravels kinetics of transcription factor binding during zygotic genome activation. Nature communications, 11(1), 4267.
+ 
