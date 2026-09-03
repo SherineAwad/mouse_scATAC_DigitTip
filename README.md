@@ -385,7 +385,7 @@ This workflow identifies dynamic transcription factor (TF) binding events across
    * **Zero Delta (White):** Equal footprint occupancy between both conditions.
 
 5. **Statistical Significance Masking ($p \le 0.05$)**  
-   To filter out noise, each pairwise change score is matched 1:1 with its corresponding statistical $p$-value (`_pvalue`). Non-significant comparison values ($p > 0.05$) are masked with `NaN` so they are completely ignored during downstream ranking and selection.
+   To filter out noise, each pairwise change score is matched 1:1 with its corresponding statistical $p$-value (`_pvalue`). Non-significant comparison values ($p > 0.05$) are completely ignored during downstream ranking and selection.
 
 6. **Dynamic TF Ranking**
 
