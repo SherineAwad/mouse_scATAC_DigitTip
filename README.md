@@ -392,7 +392,7 @@ TFs are ranked globally by their maximum absolute significant change score ($\ma
 
 $$\text{max\_abs\_change} = \max(|\text{Delta}_1|, |\text{Delta}_2|, \dots, |\text{Delta}_k|) \quad \text{for all } p_k \le 0.05$$
 
-The top $N$ dynamic TFs with the largest statistically supported shifts are selected and plotted in the heatmap alongside their full comparison trajectories.
+The top $N$ dynamic TFs with the largest statistically supported shifts (highest $\text{max\_abs\_change}$) are selected and plotted in the heatmap alongside their full comparison trajectories.
 
 ### How This Complements SnapATAC2
 
