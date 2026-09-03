@@ -1,0 +1,51 @@
+input: analysed.h5ad
+gene_matrix: geneMatrix.h5ad
+
+comparisons:
+  - name: 3xAmp_1xAmp
+    group1: 3xAmp
+    group2: 1xAmp
+
+  - name: 5xAmp_1xAmp
+    group1: 5xAmp
+    group2: 1xAmp
+
+  - name: 1xAmp_control
+    group1: 1xAmp
+    group2: control
+
+  - name: 3xAmp_control
+    group1: 3xAmp
+    group2: control
+
+  - name: 5xAmp_control
+    group1: 5xAmp
+    group2: control
+
+annotate:
+  - peaks: 3xAmp_1xAmp_significant_results.csv
+    prefix: 3xAmp_vs_1xAmp
+
+  - peaks: 5xAmp_1xAmp_significant_results.csv
+    prefix: 5xAmp_vs_1xAmp
+
+  - peaks: 1xAmp_control_significant_results.csv
+    prefix: 1xAmp_vs_Control
+
+  - peaks: 3xAmp_control_significant_results.csv
+    prefix: 3xAmp_vs_Control
+
+  - peaks: 5xAmp_control_significant_results.csv
+    prefix: 5xAmp_vs_Control
+
+motif:
+  - peaks: 3xAmp_1xAmp_all_results.csv
+    prefix: motifs_3xAmp_1xAmp
+
+  - peaks: 5xAmp_1xAmp_all_results.csv
+    prefix: motifs_5xAmp_1xAmp
+
+gene_linkage:
+  - name: 5xAmp_1xAmp
+
+  - name: 3xAmp_1xAmp

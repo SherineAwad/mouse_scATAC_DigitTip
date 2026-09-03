@@ -1,0 +1,91 @@
+configfile: "snapatac_preprocess_config.yaml"
+
+
+with open(config["samples"]) as f:
+    SAMPLES = [x.strip() for x in f if x.strip()]
+
+
+rule all:
+    input:
+        "analysed.h5ad"
+
+
+rule preprocess:
+    input:
+        samples=config["samples"]
+    output:
+        expand("{sample}.h5ad", sample=SAMPLES)
+    shell:
+        """
+        python src/preprocess.py \
+            --samples {input.samples}
+        """
+
+
+rule filter:
+    input:
+        h5ad="{sample}.h5ad"
+    output:
+        "{sample}_filtered.h5ad"
+    shell:
+        """
+        python src/filter.py \
+            --input {input.h5ad} \
+            --output {output} \
+            --prefix {wildcards.sample}
+        """
+
+
+rule merge:
+    input:
+        filtered=expand("{sample}_filtered.h5ad", sample=SAMPLES),
+        samples=config["samples"]
+    output:
+        "merged.h5ad"
+    shell:
+        """
+        python src/merge.py \
+            --samples {input.samples} \
+            --output {output}
+        """
+
+
+rule remove_doublets:
+    input:
+        "merged.h5ad"
+    output:
+        "noDoublets.h5ad"
+    shell:
+        """
+        python src/removeDoublets.py \
+            --input {input} \
+            --output {output} \
+            --prefix noDoublets
+        """
+
+
+rule rename_samples:
+    input:
+        "noDoublets.h5ad"
+    output:
+        "clean.h5ad"
+    shell:
+        """
+        python src/renameSamples.py \
+            --input {input} \
+            --output {output}
+        """
+
+
+rule analysis:
+    input:
+        "clean.h5ad"
+    output:
+        "analysed.h5ad"
+    shell:
+        """
+        python src/analysis.py \
+            --input {input} \
+            --output {output} \
+            --prefix analysis
+        """

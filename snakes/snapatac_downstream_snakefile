@@ -1,0 +1,156 @@
+configfile: "downstream_config.yaml"
+
+
+INPUT = config["input"]
+GENE_MATRIX = config["gene_matrix"]
+COMPARISONS = config["comparisons"]
+ANNOTATE = config["annotate"]
+MOTIF = config["motif"]
+GENE_LINKAGE = config["gene_linkage"]
+
+
+rule all:
+    input:
+        expand(
+            "{name}DAR.h5ad",
+            name=[x["name"] for x in COMPARISONS]
+        ),
+        expand(
+            "{name}.h5ad",
+            name=[x["name"] for x in COMPARISONS]
+        ),
+        expand(
+            "{prefix}.done",
+            prefix=[x["prefix"] for x in ANNOTATE]
+        ),
+        expand(
+            "{prefix}.done",
+            prefix=[x["prefix"] for x in MOTIF]
+        ),
+        expand(
+            "genelink_{name}.h5ad",
+            name=[x["name"] for x in GENE_LINKAGE]
+        ),
+        expand(
+            "plots/{name}.done",
+            name=[x["name"] for x in GENE_LINKAGE]
+        )
+
+
+rule DAR:
+    input:
+        INPUT
+    output:
+        "{name}DAR.h5ad"
+    params:
+        group1=lambda wc: next(
+            x["group1"] for x in COMPARISONS
+            if x["name"] == wc.name
+        ),
+        group2=lambda wc: next(
+            x["group2"] for x in COMPARISONS
+            if x["name"] == wc.name
+        )
+    shell:
+        """
+        python src/DAR.py \
+            --input {input} \
+            --output {output} \
+            --group1 {params.group1} \
+            --group2 {params.group2} \
+            --prefix {wildcards.name}
+        """
+
+
+rule diffPeaks:
+    input:
+        INPUT
+    output:
+        "{name}.h5ad"
+    params:
+        group1=lambda wc: next(
+            x["group1"] for x in COMPARISONS
+            if x["name"] == wc.name
+        ),
+        group2=lambda wc: next(
+            x["group2"] for x in COMPARISONS
+            if x["name"] == wc.name
+        )
+    shell:
+        """
+        python src/diffPeaks.py \
+            --input {input} \
+            --output {output} \
+            --group1 {params.group1} \
+            --group2 {params.group2} \
+            --prefix {wildcards.name}
+        """
+
+
+rule annotatePeaks:
+    input:
+        peaks=lambda wc: next(
+            x["peaks"] for x in ANNOTATE
+            if x["prefix"] == wc.prefix
+        )
+    output:
+        touch("{prefix}.done")
+    shell:
+        """
+        python src/annotatePeaks.py \
+            --peaks {input.peaks} \
+            --prefix {wildcards.prefix}
+
+        touch {output}
+        """
+
+
+rule motifEnrich:
+    input:
+        peaks=lambda wc: next(
+            x["peaks"] for x in MOTIF
+            if x["prefix"] == wc.prefix
+        )
+    output:
+        touch("{prefix}.done")
+    shell:
+        """
+        python src/motifEnrich.py \
+            --peaks {input.peaks} \
+            --prefix {wildcards.prefix}
+
+        touch {output}
+        """
+
+
+rule geneLinkage:
+    input:
+        h5ad=lambda wc: f"{wc.name}.h5ad",
+        gene_matrix=GENE_MATRIX
+    output:
+        h5ad="genelink_{name}.h5ad",
+        pkl="genelink_{name}_network.pkl"
+    shell:
+        """
+        python src/geneLinkage.py \
+            --input {input.h5ad} \
+            --gene_matrix {input.gene_matrix} \
+            --output {output.h5ad}
+        """
+
+
+rule plotPkl:
+    input:
+        pkl="genelink_{name}_network.pkl"
+    output:
+        touch("plots/{name}.done")
+    shell:
+        """
+        mkdir -p plots
+
+        python src/plotPkl.py \
+            --pkl {input.pkl} \
+            --prefix {wildcards.name}
+
+        touch {output}
+        """
