@@ -1,0 +1,170 @@
+configfile: "tobias_config.yaml"
+
+
+SAMPLES = ["control", "1xAmp", "3xAmp", "5xAmp"]
+
+BAM_SAMPLE = {
+    "control": "SINAA6",
+    "1xAmp": "SINAB6",
+    "3xAmp": "SINAA8",
+    "5xAmp": "SINAH5"
+}
+
+GENOME = config["genome"]
+
+
+rule all:
+    input:
+        # Barcode files
+        expand("{sample}_barcodes.tsv", sample=SAMPLES),
+
+        # Consensus peaks
+        "consensus_peaks.bed",
+
+        # Sinto BAMs + indexes
+        expand("sinto_{sample}/{sample}.bam", sample=SAMPLES),
+        expand("sinto_{sample}/{sample}.bam.bai", sample=SAMPLES),
+
+        # ATACorrect
+        expand("atcorrect_{sample}/{sample}_corrected.bw", sample=SAMPLES),
+
+        # ScoreBigwig
+        expand("atcorrect_{sample}/{sample}_footprints.bw", sample=SAMPLES),
+
+        # JASPAR
+        "JASPAR2024_CORE_vertebrates_non-redundant_pfms_jaspar.txt",
+
+        # BINDetect
+        directory("tobias_results")
+
+
+rule extract_barcodes:
+    input:
+        h5ad=config["h5ad"]
+    output:
+        expand("{sample}_barcodes.tsv", sample=SAMPLES)
+    shell:
+        """
+        python src/extract_barcodes.py \
+            --input {input.h5ad} \
+            --sample {wildcards.sample} \
+            --prefix {wildcards.sample}
+        """
+
+
+rule consensus_peaks:
+    input:
+        "peaks.txt"
+    output:
+        "consensus_peaks.bed"
+    shell:
+        """
+        python src/consensus_peaks.py \
+            --peaks {input} \
+            --prefix consensus
+        """
+
+
+rule sinto:
+    input:
+        bam=lambda wc: f"{BAM_SAMPLE[wc.sample]}/outs/possorted_bam.bam",
+        barcodes="{sample}_barcodes.tsv"
+    output:
+        bam="sinto_{sample}/{sample}.bam"
+    params:
+        outdir="sinto_{sample}"
+    threads: 4
+    shell:
+        """
+        sinto filterbarcodes \
+            -b {input.bam} \
+            -c {input.barcodes} \
+            -p {threads} \
+            --outdir {params.outdir}
+        """
+
+
+rule samtools_index:
+    input:
+        "sinto_{sample}/{sample}.bam"
+    output:
+        "sinto_{sample}/{sample}.bam.bai"
+    shell:
+        """
+        samtools index {input}
+        """
+
+
+rule atacorrect:
+    input:
+        bam="sinto_{sample}/{sample}.bam",
+        bai="sinto_{sample}/{sample}.bam.bai",
+        peaks="consensus_peaks.bed"
+    output:
+        "atcorrect_{sample}/{sample}_corrected.bw"
+    threads: 6
+    shell:
+        """
+        TOBIAS ATACorrect \
+            --bam {input.bam} \
+            --genome {GENOME} \
+            --peaks {input.peaks} \
+            --outdir atcorrect_{wildcards.sample} \
+            --split 100 \
+            --cores {threads}
+        """
+
+
+rule scorebigwig:
+    input:
+        signal="atcorrect_{sample}/{sample}_corrected.bw",
+        peaks="consensus_peaks.bed"
+    output:
+        "atcorrect_{sample}/{sample}_footprints.bw"
+    threads: 6
+    shell:
+        """
+        TOBIAS ScoreBigwig \
+            --signal {input.signal} \
+            --regions {input.peaks} \
+            --output {output} \
+            --cores {threads}
+        """
+
+
+rule download_jaspar:
+    output:
+        "JASPAR2024_CORE_vertebrates_non-redundant_pfms_jaspar.txt"
+    shell:
+        """
+        wget -O {output} \
+        https://jaspar.elixir.no/download/data/2024/CORE/JASPAR2024_CORE_vertebrates_non-redundant_pfms_jaspar.txt
+        """
+
+
+rule bindetect:
+    input:
+        motifs="JASPAR2024_CORE_vertebrates_non-redundant_pfms_jaspar.txt",
+        peaks="consensus_peaks.bed",
+        control="atcorrect_control/control_footprints.bw",
+        amp1="atcorrect_1xAmp/1xAmp_footprints.bw",
+        amp3="atcorrect_3xAmp/3xAmp_footprints.bw",
+        amp5="atcorrect_5xAmp/5xAmp_footprints.bw"
+    output:
+        directory("tobias_results")
+    threads: 6
+    shell:
+        """
+        TOBIAS BINDetect \
+            --motifs {input.motifs} \
+            --signals \
+                {input.amp1} \
+                {input.amp3} \
+                {input.amp5} \
+                {input.control} \
+            --genome {GENOME} \
+            --peaks {input.peaks} \
+            --outdir {output} \
+            --cond-names 1xAmp 3xAmp 5xAmp control \
+            --cores {threads}
+        """

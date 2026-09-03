@@ -1,0 +1,31 @@
+configfile: "cellranger_config.yaml"
+
+with open(config["samples"]) as f:
+    SAMPLES = [x.strip() for x in f if x.strip()]
+
+
+rule all:
+    input:
+        expand("cellranger/{sample}/outs/summary.json", sample=SAMPLES)
+
+
+rule cellranger:
+    output:
+        "cellranger/{sample}/outs/summary.json"
+
+    threads:
+        config["cores"]
+
+    resources:
+        mem_mb=config["mem"] * 1024
+
+    shell:
+        """
+        {config[CELLRANGER]} count \
+            --id=SINA{wildcards.sample} \
+            --reference={config[REFERENCE]} \
+            --fastqs={config[FASTQS]} \
+            --sample=SINA{wildcards.sample} \
+            --localcores={threads} \
+            --localmem={resources.mem_mb // 1024}
+        """
