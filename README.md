@@ -388,9 +388,9 @@ This workflow identifies dynamic transcription factor (TF) binding events across
    To filter out noise, each pairwise change score is matched 1:1 with its corresponding statistical $p$-value (`_pvalue`). Non-significant comparison values ($p > 0.05$) are masked with `NaN` so they are completely ignored during downstream ranking and selection.
 
 6. **Dynamic TF Ranking**  
-TFs are ranked globally by their maximum absolute significant change score ($\max(|\text{Delta}|)$ where $p \le 0.05$) across all experimental comparisons:
+TFs are ranked globally by their maximum absolute significant change score ($\max(|\Delta|)$ where $p \le 0.05$) across all experimental comparisons:
 
-$$\text{max\_abs\_change} = \max(|\text{Delta}_1|, |\text{Delta}_2|, \dots, |\text{Delta}_k|) \quad \text{for all } p_k \le 0.05$$
+$$\text{max\_abs\_change} = \max(|\Delta_1|, |\Delta_2|, \dots, |\Delta_k|) \quad \text{for all } p_k \le 0.05$$
 
 The top $N$ dynamic TFs with the largest statistically supported shifts (highest $\text{max\_abs\_change}$) are selected and plotted in the heatmap alongside their full comparison trajectories.
 
