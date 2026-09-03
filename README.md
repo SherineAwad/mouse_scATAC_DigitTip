@@ -358,10 +358,48 @@ While gene activity inference works well for standalone scATAC-seq, **true multi
                              |___/
 ```
 
-## Footprinting using TOBIAS
+## Differential Footprint Analysis using TOBIAS
 
 Footprinting looks at the Tn5 cuts around a transcription factor binding motif. If the TF is bound to the motif, it physically protects that DNA from Tn5. Therefore, Tn5 can cut the DNA around the TF but not directly where the TF is sitting. We can trace this by looking at the Tn5 coverage across the region: we expect relatively high coverage on either side of the motif and a drop in coverage directly over the motif. This characteristic dip in the coverage is the TF footprint, and it provides evidence that the TF may be bound at that motif.
- 
+
+This workflow identifies dynamic transcription factor (TF) binding events across mouse digit tip regeneration conditions (**Control**, **1xAmp**, **3xAmp**, and **5xAmp**).
+
+1. **Unbiased Baseline (Consensus Peaks)**  
+   All open chromatin regions across all samples are merged into a single set of consensus peaks. This ensures every potential binding location is evaluated at the exact same genomic coordinates across every condition, preventing positional bias.
+
+2. **Genome-Wide Motif Scanning**  
+   The consensus peaks are scanned for known TF sequence motifs (e.g., *KLF15*, *ZBED4*). Every match across the genome represents a potential docking site for that specific TF.
+
+3. **Condition-Specific Footprint Measurement**  
+   At each motif location, TOBIAS evaluates the local Tn5 transposase insertion pattern in each condition:
+   * **Open/Unbound DNA:** High Tn5 insertion rate across the motif.
+   * **Bound TF (Active Footprint):** A distinct "dip" in Tn5 cuts directly over the motif where the protein physically shields the DNA, flanked by high cut counts on either side.
+
+4. **Pairwise Differential Binding (Delta Score)**  
+   For every pairwise comparison column named `<condition1>_<condition2>_change`, TOBIAS calculates the change score as:
+   
+   $$\text{Differential Score} = \text{Binding}(\text{condition1}) - \text{Binding}(\text{condition2})$$
+   
+   * **Positive Delta (Red):** Binding occupancy is **higher in condition1** (the first condition listed).
+   * **Negative Delta (Blue):** Binding occupancy is **higher in condition2** (the second condition listed).
+   * **Zero Delta (White):** Equal footprint occupancy between both conditions.
+
+5. **Statistical Significance Masking ($p \le 0.05$)**  
+   To filter out noise, each pairwise change score is matched 1:1 with its corresponding statistical $p$-value (`_pvalue`). Non-significant comparison values ($p > 0.05$) are masked with `NaN` so they are completely ignored during downstream ranking and selection.
+
+6. **Dynamic TF Ranking**  
+   TFs are ranked globally by their maximum absolute significant change score ($\max(|\text{Delta}|)$ where $p \le 0.05$) across all experimental comparisons:
+   
+   $$\text{max\_abs\_change} = \max(|\text{Delta}_1|, |\text{Delta}_2|, \dots, |\text{Delta}_k|) \quad \text{for all } p_k \le 0.05$$
+   
+   The top $N$ dynamic TFs with the largest statistically supported shifts are selected and plotted in the heatmap alongside their full comparison trajectories.
+
+### How This Complements SnapATAC2
+
+* **SnapATAC2 (Chromatin Accessibility):** Measures whether broad genomic regions are **open or closed** (total read counts).
+* **TOBIAS (Physical Occupancy):** Measures whether a TF is **actively bound** inside an open region by detecting physical DNA protection.
+
+![](figures/footprint_top50_differential_heatmap.png?v=1) 
 
 ## References 
 
