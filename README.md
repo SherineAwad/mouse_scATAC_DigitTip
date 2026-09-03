@@ -402,6 +402,8 @@ The top **N** dynamic TFs with the largest statistically supported shifts (highe
 
 ![](figures/footprint_top50_differential_heatmap.png?v=1) 
 
+[click here for footprint results](https://docs.google.com/spreadsheets/d/1zxp9rn-1SWFdKb0xXvMh1p3pgeaOlXx8X0H2n5oYWWA/edit?usp=sharing)
+
 ## References 
 
 1. SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.
