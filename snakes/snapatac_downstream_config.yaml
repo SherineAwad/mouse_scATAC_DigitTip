@@ -1,3 +1,5 @@
+# snakes/snapatac_downstream_config.yaml
+
 input: analysed.h5ad
 gene_matrix: geneMatrix.h5ad
 

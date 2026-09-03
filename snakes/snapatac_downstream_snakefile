@@ -1,4 +1,6 @@
-configfile: "downstream_config.yaml"
+# snakes/snapatac_downstream_snakefile
+
+configfile: "snapatac_downstream_config.yaml"
 
 
 INPUT = config["input"]
@@ -9,32 +11,57 @@ MOTIF = config["motif"]
 GENE_LINKAGE = config["gene_linkage"]
 
 
+COMPARISON_NAMES = [x["name"] for x in COMPARISONS]
+ANNOTATE_PREFIXES = [x["prefix"] for x in ANNOTATE]
+MOTIF_PREFIXES = [x["prefix"] for x in MOTIF]
+GENELINK_NAMES = [x["name"] for x in GENE_LINKAGE]
+
+
+wildcard_constraints:
+    name="|".join(COMPARISON_NAMES),
+    prefix="|".join(ANNOTATE_PREFIXES + MOTIF_PREFIXES)
+
+
 rule all:
     input:
+        GENE_MATRIX,
         expand(
             "{name}DAR.h5ad",
-            name=[x["name"] for x in COMPARISONS]
+            name=COMPARISON_NAMES
         ),
         expand(
             "{name}.h5ad",
-            name=[x["name"] for x in COMPARISONS]
+            name=COMPARISON_NAMES
         ),
         expand(
             "{prefix}.done",
-            prefix=[x["prefix"] for x in ANNOTATE]
+            prefix=ANNOTATE_PREFIXES
         ),
         expand(
             "{prefix}.done",
-            prefix=[x["prefix"] for x in MOTIF]
+            prefix=MOTIF_PREFIXES
         ),
         expand(
             "genelink_{name}.h5ad",
-            name=[x["name"] for x in GENE_LINKAGE]
+            name=GENELINK_NAMES
         ),
         expand(
-            "plots/{name}.done",
-            name=[x["name"] for x in GENE_LINKAGE]
+            "figures/{name}.done",
+            name=GENELINK_NAMES
         )
+
+
+rule create_geneMatrix:
+    input:
+        INPUT
+    output:
+        GENE_MATRIX
+    shell:
+        """
+        python src/create_geneMatrix.py \
+            --input {input} \
+            --output {output}
+        """
 
 
 rule DAR:
@@ -44,11 +71,13 @@ rule DAR:
         "{name}DAR.h5ad"
     params:
         group1=lambda wc: next(
-            x["group1"] for x in COMPARISONS
+            x["group1"]
+            for x in COMPARISONS
             if x["name"] == wc.name
         ),
         group2=lambda wc: next(
-            x["group2"] for x in COMPARISONS
+            x["group2"]
+            for x in COMPARISONS
             if x["name"] == wc.name
         )
     shell:
@@ -69,11 +98,13 @@ rule diffPeaks:
         "{name}.h5ad"
     params:
         group1=lambda wc: next(
-            x["group1"] for x in COMPARISONS
+            x["group1"]
+            for x in COMPARISONS
             if x["name"] == wc.name
         ),
         group2=lambda wc: next(
-            x["group2"] for x in COMPARISONS
+            x["group2"]
+            for x in COMPARISONS
             if x["name"] == wc.name
         )
     shell:
@@ -90,7 +121,8 @@ rule diffPeaks:
 rule annotatePeaks:
     input:
         peaks=lambda wc: next(
-            x["peaks"] for x in ANNOTATE
+            x["peaks"]
+            for x in ANNOTATE
             if x["prefix"] == wc.prefix
         )
     output:
@@ -108,7 +140,8 @@ rule annotatePeaks:
 rule motifEnrich:
     input:
         peaks=lambda wc: next(
-            x["peaks"] for x in MOTIF
+            x["peaks"]
+            for x in MOTIF
             if x["prefix"] == wc.prefix
         )
     output:
@@ -143,11 +176,9 @@ rule plotPkl:
     input:
         pkl="genelink_{name}_network.pkl"
     output:
-        touch("plots/{name}.done")
+        touch("figures/{name}.done")
     shell:
         """
-        mkdir -p plots
-
         python src/plotPkl.py \
             --pkl {input.pkl} \
             --prefix {wildcards.name}

@@ -1,8 +1,8 @@
+samples: samples.txt
+
 REFERENCE: /rds/user/sa941/hpc-work/references/refdata-cellranger-arc-GRCm39-2024-A
 FASTQS: /rds/project/rds-ivbvKVT8GC0/scATAC/fastq
 CELLRANGER: /rds/user/sa941/hpc-work/tools/cellranger-atac-2.2.0/cellranger-atac
-
-samples: samples.txt
 
 cores: 24
 mem: 96

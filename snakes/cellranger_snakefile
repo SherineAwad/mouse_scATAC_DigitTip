@@ -16,16 +16,13 @@ rule cellranger:
     threads:
         config["cores"]
 
-    resources:
-        mem_mb=config["mem"] * 1024
-
     shell:
         """
         {config[CELLRANGER]} count \
-            --id=SINA{wildcards.sample} \
+            --id={wildcards.sample} \
             --reference={config[REFERENCE]} \
             --fastqs={config[FASTQS]} \
-            --sample=SINA{wildcards.sample} \
-            --localcores={threads} \
-            --localmem={resources.mem_mb // 1024}
+            --sample={wildcards.sample} \
+            --localcores={config[cores]} \
+            --localmem={config[mem]}
         """

@@ -1,0 +1,35 @@
+configfile: "snapatac_preprocess_config.yaml"
+
+with open(config["samples"]) as f:
+    SAMPLES = [x.strip() for x in f if x.strip()]
+
+
+rule all:
+    input:
+        expand("{sample}_filtered.h5ad", sample=SAMPLES)
+
+
+rule preprocess:
+    input:
+        config["samples"]
+    output:
+        expand("{sample}.h5ad", sample=SAMPLES)
+    shell:
+        """
+        python src/preprocess.py \
+            --samples {input}
+        """
+
+
+rule filter:
+    input:
+        "{sample}.h5ad"
+    output:
+        "{sample}_filtered.h5ad"
+    shell:
+        """
+        python src/filter.py \
+            --input {input} \
+            --output {output} \
+            --prefix {wildcards.sample}
+        """
