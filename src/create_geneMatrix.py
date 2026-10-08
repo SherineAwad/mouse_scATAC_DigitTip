@@ -19,7 +19,7 @@ def parse_gff3_tss(gff3_path):
                 continue
 
             if parts[2] == "gene":
-                chrom = parts[0]
+                chromosome = parts[0]
                 start = int(parts[3])
                 end = int(parts[4])
                 strand = parts[6]
@@ -36,7 +36,7 @@ def parse_gff3_tss(gff3_path):
                     genes.append(
                         {
                             "gene_name": gene_name,
-                            "chrom": chrom,
+                            "chromosome": chromosome,
                             "start": start,
                             "end": end,
                             "strand": strand,
@@ -88,7 +88,7 @@ def main():
     anno_df = parse_gff3_tss(snap.genome.mm39.annotation)
     matched_var = anno_df.reindex(gene_matrix.var_names)
 
-    for col in ["chrom", "start", "end", "strand", "tss"]:
+    for col in ["chromosome", "start", "end", "strand", "tss"]:
         if col in matched_var.columns:
             gene_matrix.var[col] = matched_var[col].values
 
