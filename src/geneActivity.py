@@ -1,12 +1,11 @@
+
 #!/usr/bin/env python3
 
 import argparse
 import os
 
-import numpy as np
 import pandas as pd
 import scanpy as sc
-import snapatac2 as snap
 import matplotlib.pyplot as plt
 
 
@@ -31,12 +30,11 @@ def main():
     args = parser.parse_args()
 
     # ------------------------------------------------------------
-    # 1. Read gene matrix
+    # 1. Read gene-activity matrix
     # ------------------------------------------------------------
 
     print("Reading gene matrix...")
-    adata = snap.read(args.input)
-    adata = adata.to_memory()
+    adata = sc.read_h5ad(args.input)
 
     print(
         f"Gene matrix: "
@@ -44,8 +42,31 @@ def main():
         f"{adata.n_vars} genes"
     )
 
-    # Use existing log-normalized gene activity values if available.
-    # Otherwise create them from the gene activity matrix in .X.
+    if adata.n_obs == 0 or adata.n_vars == 0:
+        raise ValueError("The input matrix contains no cells or genes.")
+
+    # Require unique gene names for unambiguous marker results
+    if not adata.var_names.is_unique:
+        raise ValueError(
+            "Gene names are not unique. Resolve duplicate gene identifiers "
+            "before running marker analysis."
+        )
+
+    # Make cell identifiers unique without changing row order
+    if not adata.obs_names.is_unique:
+
+        print("Making duplicate cell identifiers unique...")
+
+        if "sample" in adata.obs.columns:
+            sample = adata.obs["sample"].astype(str)
+            adata.obs_names = (
+                sample + "_" + adata.obs_names.astype(str)
+            )
+
+        if not adata.obs_names.is_unique:
+            adata.obs_names_make_unique()
+
+    # Use existing log1p values; do not normalize them again
     if "log1p" in adata.layers:
 
         print("Using existing 'log1p' gene-activity layer...")
@@ -55,10 +76,10 @@ def main():
 
         print(
             "No 'log1p' layer found. "
-            "Normalizing gene activity and computing log1p..."
+            "Normalizing and log-transforming gene activity..."
         )
 
-        sc.pp.normalize_total(adata)
+        sc.pp.normalize_total(adata, target_sum=1e4)
         sc.pp.log1p(adata)
 
     # ------------------------------------------------------------
@@ -67,13 +88,19 @@ def main():
 
     if "leiden" not in adata.obs.columns:
         raise ValueError(
-            "Input file does not contain adata.obs['leiden']"
+            "Input file does not contain adata.obs['leiden']."
         )
+
+    if adata.obs["leiden"].isna().any():
+        raise ValueError("The Leiden column contains missing values.")
+
+    if adata.obs["leiden"].nunique() < 2:
+        raise ValueError("At least two Leiden clusters are required.")
 
     print(f"Leiden clusters: {adata.obs['leiden'].nunique()}")
 
     # ------------------------------------------------------------
-    # 3. Differential gene activity
+    # 3. Rank differential gene activity
     # ------------------------------------------------------------
 
     print("Calculating differential gene activity...")
@@ -81,42 +108,49 @@ def main():
     sc.tl.rank_genes_groups(
         adata,
         groupby="leiden",
-        method="wilcoxon"
+        method="wilcoxon",
+        use_raw=False,
+        corr_method="benjamini-hochberg"
     )
 
     # ------------------------------------------------------------
-    # 4. Extract top markers
+    # 4. Extract top 30 markers per cluster
     # ------------------------------------------------------------
 
     n_top = 30
+    n_plot = 10
+
+    ranked = adata.uns["rank_genes_groups"]
+    groups = ranked["names"].dtype.names
 
     results = []
-
-    groups = adata.uns["rank_genes_groups"]["names"].dtype.names
+    plot_genes_by_cluster = {}
 
     for cluster in groups:
 
-        genes = adata.uns["rank_genes_groups"]["names"][cluster][:n_top]
-        scores = adata.uns["rank_genes_groups"]["scores"][cluster][:n_top]
-        logfc = adata.uns["rank_genes_groups"]["logfoldchanges"][cluster][:n_top]
-        pvals = adata.uns["rank_genes_groups"]["pvals"][cluster][:n_top]
-        pvals_adj = adata.uns["rank_genes_groups"]["pvals_adj"][cluster][:n_top]
+        genes = ranked["names"][cluster]
+        scores = ranked["scores"][cluster]
+        pvals = ranked["pvals"][cluster]
+        pvals_adj = ranked["pvals_adj"][cluster]
 
-        for rank, (gene, score, lf, pval, pval_adj) in enumerate(
-            zip(genes, scores, logfc, pvals, pvals_adj),
-            start=1
-        ):
+        for rank in range(min(n_top, len(genes))):
+
             results.append(
                 {
                     "cluster": cluster,
-                    "rank": rank,
-                    "gene": gene,
-                    "score": score,
-                    "logfoldchange": lf,
-                    "pval": pval,
-                    "pval_adj": pval_adj,
+                    "rank": rank + 1,
+                    "gene": genes[rank],
+                    "score": scores[rank],
+                    "pval": pvals[rank],
+                    "pval_adj": pvals_adj[rank],
                 }
             )
+
+        # Preserve the top 10 genes for each cluster.
+        # Shared genes may appear in multiple cluster groups.
+        plot_genes_by_cluster[cluster] = list(
+            dict.fromkeys(genes[:n_plot].tolist())
+        )
 
     markers = pd.DataFrame(results)
 
@@ -126,48 +160,35 @@ def main():
     print(f"Saved: {marker_file}")
 
     # ------------------------------------------------------------
-    # 5. Select genes for dot plot
-    # ------------------------------------------------------------
-
-    plot_genes = (
-        markers
-        .groupby("cluster", sort=False)
-        .head(10)["gene"]
-        .drop_duplicates()
-        .tolist()
-    )
-
-    print(f"Genes in dot plot: {len(plot_genes)}")
-
-    # ------------------------------------------------------------
-    # 6. Dot plot
+    # 5. Create dotplot
     # ------------------------------------------------------------
 
     os.makedirs("figures", exist_ok=True)
 
-    print("Creating marker dot plot...")
+    plot_file = f"figures/{args.prefix}_marker_dotplot.png"
 
-    sc.pl.dotplot(
+    print("Creating marker dotplot...")
+
+    dotplot = sc.pl.dotplot(
         adata,
-        var_names=plot_genes,
+        var_names=plot_genes_by_cluster,
         groupby="leiden",
         standard_scale="var",
         dendrogram=False,
-        show=False
+        use_raw=False,
+        show=False,
+        return_fig=True
     )
 
-    plt.savefig(
-        f"figures/{args.prefix}_marker_dotplot.png",
+    dotplot.savefig(
+        plot_file,
         dpi=300,
         bbox_inches="tight"
     )
 
-    plt.close()
+    plt.close("all")
 
-    print(
-        f"Saved: figures/{args.prefix}_marker_dotplot.png"
-    )
-
+    print(f"Saved: {plot_file}")
     print("Done.")
 
 

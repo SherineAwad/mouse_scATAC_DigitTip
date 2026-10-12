@@ -404,6 +404,133 @@ The top **N** dynamic TFs with the largest statistically supported shifts (highe
 
 [click here for footprint results](https://docs.google.com/spreadsheets/d/1zxp9rn-1SWFdKb0xXvMh1p3pgeaOlXx8X0H2n5oYWWA/edit?usp=sharing)
 
+
+## scATAC-seq Cell-Type Annotation: Gene Activity
+
+### 1. What is gene activity?
+
+scATAC-seq measures chromatin accessibility rather than gene expression directly.
+
+Accessible DNA is more available to the transposition enzyme and can therefore be detected by sequencing. Accessible regions may include gene promoters, gene bodies, and regulatory elements such as enhancers.
+
+Gene activity uses chromatin accessibility signals associated with genes to estimate their regulatory state in each cell.
+
+**Gene activity is an indirect proxy for gene expression, not a direct measurement of RNA abundance.**
+
+### 2. How do we generate a gene-activity matrix?
+
+#### Step 1: Identify accessible DNA regions
+
+Sequencing reads are mapped to the reference genome to identify DNA fragments associated with accessible chromatin in individual cells.
+
+#### Step 2: Associate accessibility with genes
+
+Accessible fragments are assigned to gene-associated genomic regions using gene annotations.
+
+The regions included depend on the gene-activity method. For example, gene-body accessibility may contribute to gene activity, and some methods also include promoter or nearby genomic regions.
+
+The underlying assumption is that accessibility in these regions provides information about the regulatory state of associated genes.
+
+However, genomic proximity alone does not establish that an accessible region regulates a particular gene.
+
+#### Step 3: Construct the gene-activity matrix
+
+Accessibility signals associated with each gene are summarised for each cell.
+
+The resulting matrix contains:
+
+- **Rows:** Individual cells.
+- **Columns:** Genes.
+- **Values:** Gene-activity scores derived from chromatin accessibility.
+
+Each cell therefore has an accessibility-based activity profile across thousands of genes.
+
+### 3. How is gene activity used for cell-type annotation?
+
+Cells are grouped into clusters according to similarities in their chromatin accessibility profiles.
+
+We then identify genes whose activity differs between each cluster and the other cells. These genes are candidate gene-activity markers that can help characterise the biological identity of each cluster.
+
+For example, if a cluster shows activity patterns consistent with several established fibroblast-associated markers, this supports a fibroblast identity.
+
+However, a single marker is rarely sufficient. Annotation should consider multiple markers together and assess whether they support a consistent biological interpretation.
+
+**Gene-activity markers should not automatically be interpreted as equivalent to gene-expression markers identified by scRNA-seq.**
+
+### 4. Limitations of scATAC-seq cell-type annotation
+
+#### 4.1 Gene activity is not gene expression
+
+An accessible gene-associated region does not necessarily mean that the gene is actively transcribed.
+
+Similarly, a gene may be expressed even when its accessibility-derived activity score is weak.
+
+Consequently, scATAC-seq may not identify cell types as directly as scRNA-seq, which measures RNA abundance.
+
+#### 4.2 Potential gene-length bias
+
+When gene-body accessibility contributes to gene activity, longer genes may accumulate more accessibility signal because they span larger genomic regions.
+
+The extent of this effect depends on how the gene-activity method summarises and normalises accessibility.
+
+Long genes do not automatically become strong cluster markers. Their activity must also differ between clusters to be informative for annotation.
+
+#### 4.3 Sparse data
+
+Many accessible regions are detected in only a subset of cells. A biologically relevant region may not be detected in every cell, even when it is genuinely accessible.
+
+This sparsity can weaken or make marker signals less consistent, complicating the identification of cell populations.
+
+#### 4.4 Distal regulatory elements
+
+Enhancers can regulate genes located far away, sometimes bypassing nearby genes.
+
+Associating accessibility with genes based on genomic location cannot reliably capture every enhancer–gene relationship.
+
+Consequently, some regulatory signals may be assigned to the wrong gene or may not be adequately represented in the gene-activity profile.
+
+#### 4.5 Shared markers between cell types
+
+Closely related cell types may share many markers. A gene that supports one cell identity may not distinguish it from another related population.
+
+Reliable annotation therefore requires combinations of markers rather than relying on individual genes.
+
+#### 4.6 Not all clusters represent distinct cell types
+
+Clustering can separate cells according to differences in cell identity, activation state, differentiation, cell cycle, or other biological and technical factors.
+
+Therefore, each cluster should not automatically be interpreted as a distinct cell type. Some clusters may represent different states of the same cell population.
+
+#### 4.7 Statistical significance does not guarantee biological specificity
+
+A gene can show a statistically significant difference between clusters without being a useful cell-type marker.
+
+With large numbers of cells, even relatively small differences may produce very small p-values.
+
+Marker rankings must therefore be interpreted in terms of biological relevance and specificity, not statistical significance alone.
+
+#### 4.8 Limited evidence about regulatory function
+
+Chromatin accessibility provides information about regulatory potential, but it does not establish that a transcription factor is bound, that a target gene is activated, or that a regulatory interaction is functional.
+
+Transcription-factor motif analysis can provide additional clues about potential regulatory involvement, but motif accessibility alone does not demonstrate TF binding or activity.
+
+Additional evidence, such as TF footprinting, chromatin interaction data, or RNA expression, may help investigate these mechanisms. Each method provides different evidence and has its own limitations.
+
+
+The goal is not to assign a specific identity to every cluster, but to make the most defensible annotation supported by the available evidence.
+
+
+##### Gene activity based top markers 
+![](figures/geneActivity_marker_dotplot.png?v=1)
+
+
+##### Annotations 
+
+![](figures/annotated_umap.png?v=1)
+![](figures/annotated_umapON.png?v=1)
+
+
 ## References 
 
 1. SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.
