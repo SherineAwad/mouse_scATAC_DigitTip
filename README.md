@@ -522,13 +522,12 @@ The goal is not to assign a specific identity to every cluster, but to make the 
 
 
 ##### Gene activity based top markers 
-![](figures/geneActivity_marker_dotplot.png?v=1)
-
+![](figures/geneActivity_marker_dotplot.png?v=2)
 
 ##### Annotations 
 
-![](figures/annotated_umap.png?v=1)
-![](figures/annotated_umapON.png?v=1)
+![](figures/annotated_umap.png?v=2)
+![](figures/annotated_umapON.png?v=2)
 
 
 ## References 
