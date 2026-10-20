@@ -404,6 +404,20 @@ The top **N** dynamic TFs with the largest statistically supported shifts (highe
 
 [click here for footprint results](https://docs.google.com/spreadsheets/d/1zxp9rn-1SWFdKb0xXvMh1p3pgeaOlXx8X0H2n5oYWWA/edit?usp=sharing)
 
+## TF Motif Activity (pychromVAR)
+
+Building on upstream motif enrichment and footprinting analyses, identifying potential transcription factor (TF) binding sites only shows where a factor *could* bind—it does not prove active gene regulation. Furthermore, because matched single-cell gene expression data is not available for this scATAC-seq dataset, target gene expression cannot be directly measured to infer activity.
+
+To bridge this gap and evaluate functional TF dynamics, we analyzed transcription factor activity using chromVAR:
+
+* **Quantifying TF Activity:** chromVAR computes deviation scores by comparing the accessibility of genomic regions containing a specific TF motif against an expected background set of peaks, correcting for technical biases. This measures whether a TF's binding sites are significantly more accessible (open/activated) or less accessible (closed/repressed) than expected.
+* **Selection Approach:** To capture core regulatory shifts across the experimental conditions, average motif activity was calculated per group, and candidates were ranked by their absolute magnitude to capture both up- and down-regulated drivers. Pooling the top-ranked TFs across conditions generated a unified, non-redundant panel.
+* **Visualization:** These dynamics were displayed using complementary views—dot plots (where color reflects mean deviation score and dot size indicates the fraction of cells with signal above baseline) and clustered heatmaps (grouping motifs with similar trajectories across the experimental gradient).
+
+
+![](figures/topTFs_dotplot.png?v=1)
+
+![](figures/topTFs_clustermap?v=1) 
 
 ## scATAC-seq Cell-Type Annotation: Gene Activity
 
