@@ -428,11 +428,11 @@ For each sample (control, 1xAmp, 3xAmp and 5xAmp):
 
 **Limitations:** The analysis does not measure gene expression or confirm TF binding or functional activity. Focusing on the 25,000 most accessible regions may exclude informative regions. Selecting motifs by absolute mean deviation is exploratory and does not establish statistically significant differences between samples.
 
-![](figures/topTFs_clustermap.png?v=2)
+![](figures/topTFs_clustermap.png?v=3) 
 
-- and as a dotplot for TOP motifs:  
-![](figures/topTFs_dotplot.png?v=2)
-
+- and as a dotplot for TOP motifs: 
+ 
+![](figures/topTFs_dotplot.png?v=3)
 
 ## scATAC-seq Cell-Type Annotation: Gene Activity
 
