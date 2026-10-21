@@ -406,18 +406,33 @@ The top **N** dynamic TFs with the largest statistically supported shifts (highe
 
 ## TF Motif Activity (pychromVAR)
 
-Building on upstream motif enrichment and footprinting analyses, identifying potential transcription factor (TF) binding sites only shows where a factor *could* bind—it does not prove active gene regulation. Furthermore, because matched single-cell gene expression data is not available for this scATAC-seq dataset, target gene expression cannot be directly measured to infer activity.
+The analysis takes scATAC-seq data and calculates chromVAR deviation scores for transcription factor (TF) motifs.
 
-To bridge this gap and evaluate functional TF dynamics, we analyzed transcription factor activity using chromVAR:
+##### TF motif accessibility analysis
 
-* **Quantifying TF Activity:** chromVAR computes deviation scores by comparing the accessibility of genomic regions containing a specific TF motif against an expected background set of peaks, correcting for technical biases. This measures whether a TF's binding sites are significantly more accessible (open/activated) or less accessible (closed/repressed) than expected.
-* **Selection Approach:** To capture core regulatory shifts across the experimental conditions, average motif activity was calculated per group, and candidates were ranked by their absolute magnitude to capture both up- and down-regulated drivers. Pooling the top-ranked TFs across conditions generated a unified, non-redundant panel.
-* **Visualization:** These dynamics were displayed using complementary views—dot plots (where color reflects mean deviation score and dot size indicates the fraction of cells with signal above baseline) and clustered heatmaps (grouping motifs with similar trajectories across the experimental gradient).
+1. **Selects accessible regions:** Focuses on the **25,000 most accessible genomic regions**.
+2. **Adds DNA sequences:** Identifies the DNA sequences corresponding to these regions.
+3. **Corrects for biases:** Accounts for GC content and differences in background accessibility.
+4. **Identifies TF motifs:** Finds known DNA sequence motifs associated with potential TF binding in these regions.
+5. **Calculates chromVAR deviations:** Estimates whether regions containing each motif are more or less accessible than expected, accounting for background accessibility and technical biases.
 
+##### Selecting TF motifs for visualization
 
-![](figures/topTFs_dotplot.png?v=1)
+For each sample (control, 1xAmp, 3xAmp and 5xAmp):
 
-![](figures/topTFs_clustermap?v=1) 
+- Calculates the mean chromVAR deviation for each motif across cells.
+- Selects the **top motifs with the largest absolute mean deviations**, capturing both positive and negative deviations.
+- Combines the selected motifs across all samples to visualize them in a heatmap and dotplot.
+
+**Interpretation:** This highlights TF motifs associated with the strongest deviations in chromatin accessibility in each sample.
+
+**Limitations:** The analysis does not measure gene expression or confirm TF binding or functional activity. Focusing on the 25,000 most accessible regions may exclude informative regions. Selecting motifs by absolute mean deviation is exploratory and does not establish statistically significant differences between samples.
+
+![](figures/topTFs_clustermap?v=2)
+
+- and as a dotplot for TOP motifs:  
+![](figures/topTFs_dotplot.png?v=2)
+
 
 ## scATAC-seq Cell-Type Annotation: Gene Activity
 

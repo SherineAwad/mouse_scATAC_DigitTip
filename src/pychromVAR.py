@@ -48,7 +48,6 @@ class MotifWrapper:
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         description="Run pychromVAR on AnnData"
     )
@@ -61,20 +60,20 @@ def main():
 
     parser.add_argument(
         "--output",
-        default="chromVAR.h5ad",
-        help="Path to output file"
+        default=None,
+        help="Path to output file (defaults to <prefix>.h5ad)"
     )
 
     parser.add_argument(
         "--prefix",
         default="chromVAR",
-        help="Prefix for output"
+        help="Prefix for output files"
     )
 
     parser.add_argument(
         "--genome",
         default="mm39",
-        help="Genome build"
+        help="Genome build (e.g., mm39, hg38)"
     )
 
     parser.add_argument(
@@ -98,6 +97,10 @@ def main():
     )
 
     args = parser.parse_args()
+
+    # Handle dynamic output path using prefix if not specified
+    if args.output is None:
+        args.output = f"{args.prefix}_deviations.h5ad"
 
     print(f"Loading AnnData from {args.input}...")
     adata = snap.read(args.input, backed=None)
@@ -127,14 +130,20 @@ def main():
     )
 
     motifs = [MotifWrapper(m) for m in raw_motifs]
-
     print(f"Loaded {len(motifs)} motifs.")
 
     print(
-        f"Adding peak sequences using SnapATAC2 {args.genome}..."
+        f"Adding peak sequences using SnapATAC2 genome '{args.genome}'..."
     )
 
-    genome_file = snap.genome.mm39.fasta
+    # Dynamically fetch the genome fasta based on user argument
+    try:
+        genome_obj = getattr(snap.genome, args.genome)
+        genome_file = genome_obj.fasta
+    except AttributeError:
+        raise ValueError(
+            f"Genome '{args.genome}' is not valid or supported in snap.genome."
+        )
 
     pc.add_peak_seq(
         adata,
@@ -165,6 +174,9 @@ def main():
         adata,
         n_jobs=args.n_cpu
     )
+
+    # Transfer cell metadata / annotations from input to output object
+    dev.obs = adata.obs.copy()
 
     print(f"Saving output matrix to {args.output}...")
     dev.write_h5ad(args.output)
