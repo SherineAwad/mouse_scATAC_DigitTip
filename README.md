@@ -593,19 +593,20 @@ Links were then classified into three categories:
 
 - **Shared links:** detected above the score threshold in both conditions.
 - **Gained links:** detected above the threshold in the second condition but not in the first.
+- **Lost links:** detected above the threshold in the first condition but not in the second.
 
 This comparison identifies changes in the detected co-accessibility networks between conditions. An increase in gained links may indicate changes in chromatin regulatory organisation and potentially reflect shifts in cellular programmes.
 
 Importantly, these categories represent differences in detected links based on a score threshold; they are not statistical tests of differential co-accessibility.
 
-| Comparison | Shared | Gained |
-|---|---:|---:|
-| control vs 1xAmp | 137,737 | 1,645 |
-| control vs 3xAmp | 175,009 | 1,066 |
-| control vs 5xAmp | 503,643 | 72,671 |
-| 1xAmp vs 3xAmp | 130,914 | 45,161 |
-| 3xAmp vs 5xAmp | 175,010 | 401,304 |
-| 1xAmp vs 5xAmp | 139,262 | 437,052 |
+| Comparison | Shared | Lost | Gained |
+|---|---:|---:|---:|
+| Control vs 1xAmp | 137,737 | 744,319 | 1,645 |
+| Control vs 3xAmp | 175,009 | 707,047 | 1,066 |
+| Control vs 5xAmp | 503,643 | 378,413 | 72,671 |
+| 1xAmp vs 3xAmp | 130,914 | 8,468 | 45,161 |
+| 3xAmp vs 5xAmp | 175,010 | 1,065 | 401,304 |
+| 1xAmp vs 5xAmp | 139,262 | 120 | 437,052 |
 
 
 ## References 
