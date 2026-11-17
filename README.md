@@ -593,7 +593,6 @@ Links were then classified into three categories:
 
 - **Shared links:** detected above the score threshold in both conditions.
 - **Gained links:** detected above the threshold in the second condition but not in the first.
-- **Lost links:** detected above the threshold in the first condition but not in the second.
 
 This comparison identifies changes in the detected co-accessibility networks between conditions. An increase in gained links may indicate changes in chromatin regulatory organisation and potentially reflect shifts in cellular programmes.
 
@@ -616,4 +615,7 @@ Importantly, these categories represent differences in detected links based on a
 2. Brown, D. A., Koll, K. K., Brush, E., Darner, G., Curtis Jr, T., Dvergsten, T., ... & Poss, K. D. (2026). Enhancer-directed gene delivery for digit regeneration based on conserved epidermal factors. Proceedings of the National Academy of Sciences, 123(17), e2532804123. 
 
 3. Bentsen, M., Goymann, P., Schultheis, H., Klee, K., Petrova, A., Wiegandt, R., ... & Looso, M. (2020). ATAC-seq footprinting unravels kinetics of transcription factor binding during zygotic genome activation. Nature communications, 11(1), 4267.
+
+4. Trimbour, R., Saez-Rodriguez, J., & Cantini, L. (2026). CIRCE: a scalable Python package to predict cis-regulatory DNA interactions from single-cell chromatin accessibility data. Bioinformatics, 42(3), btag092.
+
  
