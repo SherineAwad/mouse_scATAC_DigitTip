@@ -575,11 +575,6 @@ The resulting networks describe regions with coordinated accessibility patterns.
 
 Following network construction, CIRCE was used to identify co-accessible chromatin networks (CCANs), which group connected genomic regions into network modules.
 
-For visualisation, we selected the **two largest CCAN modules**, based on the number of genomic regions they contained. Networks were coloured by CCAN membership, with node size reflecting the number of connections of each region. Where necessary, only the highest-scoring co-accessibility links were displayed to keep the visualisations manageable.
-
-<img src="figures/control_network.png?v=1" width="48%" /><img src="figures/1xAmp_network.png?v=1" width="48%" />
-
-<img src="figures/3xAmp_network.png?v=1" width="48%" /><img src="figures/5xAmp_network.png?v=1" width="48%" />
 
 
 ### Differential co-accessibility analysis
