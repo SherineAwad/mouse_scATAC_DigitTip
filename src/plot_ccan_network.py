@@ -11,7 +11,7 @@ def main():
     parser.add_argument("--ccans", required=True)
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--cutoff", type=float, default=None)
-    parser.add_argument("--n", type=int, default=None, help="Plot only top N CCAN modules.")
+    parser.add_argument("--n", type=int, default=None, help="Plot only top N CCAN modules by number of significant links.")
     parser.add_argument("--nlinks", type=int, default=5000, help="Maximum number of edges to plot.")
     args = parser.parse_args()
 
@@ -28,25 +28,34 @@ def main():
         links_df = links_df[links_df['score'] >= args.cutoff]
         print(f"Filtered to score >= {args.cutoff}. Remaining edges: {len(links_df):,}", flush=True)
 
-    # --- NEW GLOBAL SUMMARY BLOCK ---
     global_peaks = set(links_df['Peak1']).union(set(links_df['Peak2']))
     print("\n" + "="*50, flush=True)
     print(f"GLOBAL SUMMARY FOR: {args.prefix}", flush=True)
     print(f"Total edges passing cutoff: {len(links_df):,}", flush=True)
     print(f"Total unique peaks involved: {len(global_peaks):,}", flush=True)
     print("="*50 + "\n", flush=True)
-    # --------------------------------
 
     if args.n is not None:
-        print(f"Selecting top {args.n} modules by peak count...", flush=True)
-        top_ccans = ccans_df['CCAN'].value_counts().nlargest(args.n).index.tolist()
+        # Count significant links per module
+        node_to_ccan_all = dict(zip(ccans_df['Peak'], ccans_df['CCAN']))
+        
+        module_link_counts = {}
+        for _, row in links_df.iterrows():
+            ccan1 = node_to_ccan_all.get(row['Peak1'])
+            ccan2 = node_to_ccan_all.get(row['Peak2'])
+            if ccan1 is not None and ccan2 is not None and ccan1 == ccan2:
+                module_link_counts[ccan1] = module_link_counts.get(ccan1, 0) + 1
+        
+        # Sort modules by count of significant links
+        sorted_modules = sorted(module_link_counts.items(), key=lambda x: x[1], reverse=True)
+        top_ccans = [m[0] for m in sorted_modules[:args.n]]
+        
+        print(f"Top {args.n} modules by significant link count: {top_ccans}", flush=True)
         ccans_df = ccans_df[ccans_df['CCAN'].isin(top_ccans)]
-        print(f"Retained CCANs: {top_ccans}", flush=True)
 
     valid_peaks = set(ccans_df['Peak'])
     links_df = links_df[links_df['Peak1'].isin(valid_peaks) & links_df['Peak2'].isin(valid_peaks)]
     
-    # USING THE NEW nlinks PARAMETER HERE
     if len(links_df) > args.nlinks:
         links_df = links_df.sort_values(by='score', ascending=False).head(args.nlinks)
         print(f"Hard limit applied: Plotting top {args.nlinks} edges to prevent timeout.", flush=True)

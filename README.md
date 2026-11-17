@@ -569,11 +569,17 @@ For each condition, cells were analysed separately. Genomic regions were filtere
 
 CIRCE first grouped cells into metacells to obtain a more robust representation of chromatin accessibility. It then identified pairs of genomic regions whose accessibility patterns were associated across metacells. These associations are referred to as **co-accessibility links**.
 
-The resulting networks describe regions with coordinated accessibility patterns. Such links can highlight potential relationships between regulatory regions and provide clues about changes in chromatin regulatory organisation. However, co-accessibility alone does not establish direct physical interactions, enhancer–gene regulation or functional regulatory activity.
+The resulting networks describe regions with coordinated accessibility patterns. Such links can highlight potential relationships between regulatory regions and provide clues about changes in chromatin regulatory organisation.
 
 ### CCAN identification and network visualisation
 
 Following network construction, CIRCE was used to identify co-accessible chromatin networks (CCANs), which group connected genomic regions into network modules.
+
+For visualisation, we selected the two largest CCAN modules, based on the number of significant co-accessibility links they contained. Networks were coloured by CCAN membership, with node size reflecting the number of connections of each region. Where necessary, only the highest-scoring co-accessibility links were displayed to keep the visualisations manageable.
+
+<img src="figures/control_network.png?v=2" width="48%" /><img src="figures/1xAmp_network.png?v=2" width="48%" />
+
+<img src="figures/3xAmp_network.png?v=2" width="48%" /><img src="figures/5xAmp_network.png?v=2" width="48%" />
 
 
 
@@ -591,7 +597,7 @@ Links were then classified into three categories:
 
 This comparison identifies changes in the detected co-accessibility networks between conditions. An increase in gained links may indicate changes in chromatin regulatory organisation and potentially reflect shifts in cellular programmes.
 
-Importantly, these categories represent differences in detected links based on a score threshold; they are not statistical tests of differential co-accessibility. Gained or lost links should therefore be interpreted as candidate changes requiring further investigation, rather than proof of altered regulatory interactions.
+Importantly, these categories represent differences in detected links based on a score threshold; they are not statistical tests of differential co-accessibility.
 
 | Comparison | Shared | Gained |
 |---|---:|---:|
