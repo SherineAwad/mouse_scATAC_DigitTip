@@ -103,6 +103,9 @@ def main():
     parser.add_argument("--min-cell-frac", type=float, default=0.01,
                         help="Minimum fraction of cells a region must be "
                              "present in (default: 0.01). Set 0 to disable.")
+    parser.add_argument("--min-condition-cells", type=int, default=200,
+                        help="Skip conditions with fewer cells than this after "
+                             "subsampling (default: 200). Set 0 to disable.")
 
     args = parser.parse_args()
 
@@ -177,6 +180,11 @@ def main():
             cell_indices = cell_indices[pick]
             n_cond = args.max_cells
 
+        if args.min_condition_cells > 0 and n_cond < args.min_condition_cells:
+            print(f"  Skipping: only {n_cond} cells "
+                  f"(< --min-condition-cells={args.min_condition_cells})", flush=True)
+            continue
+
         print(f"\nLoading matrix for {n_cond:,} cells × {n_vars:,} regions...",
               flush=True)
         mat_cells = load_cells_from_h5ad(args.input, cell_indices, n_vars)
@@ -208,6 +216,7 @@ def main():
                        if valid_vars_list else np.array([], np.int64))
         var_sums = (np.concatenate(valid_sum_list)
                     if valid_sum_list else np.array([], np.float64))
+        assert len(var_indices) == len(var_sums), "index/sum desync"
         print(f"  Passed filter: {len(var_indices):,}", flush=True)
 
         if len(var_indices) == 0:
@@ -248,6 +257,9 @@ def main():
         print("\nComputing metacells...", flush=True)
         metacells = ci.metacells.compute_metacells(condition_adata)
         print(f"  Metacells: {metacells.n_obs:,}", flush=True)
+        if metacells.n_obs < 20:
+            print(f"  WARNING: only {metacells.n_obs} metacells — "
+                  f"co-accessibility estimates will be noisy.", flush=True)
         print(f"  Regions:   {metacells.n_vars:,}", flush=True)
         print(f"  metacells.X type: {type(metacells.X).__name__}, "
               f"shape={metacells.X.shape}", flush=True)

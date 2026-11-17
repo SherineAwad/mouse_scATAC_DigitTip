@@ -559,6 +559,55 @@ The goal is not to assign a specific identity to every cluster, but to make the 
 ![](figures/annotated_umapON.png?v=2)
 
 
+## Co-accessibility Analysis
+
+### Co-accessibility network construction
+
+To investigate changes in chromatin organisation across experimental conditions, we performed condition-specific co-accessibility analysis using **CIRCE**.
+
+For each condition, cells were analysed separately. Genomic regions were filtered based on their accessibility across cells, retaining regions detected in at least 30 cells or 1% of the cells in that condition, whichever threshold was higher. Where necessary, the number of regions was limited to the 200,000 most accessible regions.
+
+CIRCE first grouped cells into metacells to obtain a more robust representation of chromatin accessibility. It then identified pairs of genomic regions whose accessibility patterns were associated across metacells. These associations are referred to as **co-accessibility links**.
+
+The resulting networks describe regions with coordinated accessibility patterns. Such links can highlight potential relationships between regulatory regions and provide clues about changes in chromatin regulatory organisation. However, co-accessibility alone does not establish direct physical interactions, enhancer–gene regulation or functional regulatory activity.
+
+### CCAN identification and network visualisation
+
+Following network construction, CIRCE was used to identify co-accessible chromatin networks (CCANs), which group connected genomic regions into network modules.
+
+For visualisation, we selected the **two largest CCAN modules**, based on the number of genomic regions they contained. Networks were coloured by CCAN membership, with node size reflecting the number of connections of each region. Where necessary, only the highest-scoring co-accessibility links were displayed to keep the visualisations manageable.
+
+<img src="figures/control_network.png?v=1" width="48%" /><img src="figures/1xAmp_network.png?v=1" width="48%" />
+
+<img src="figures/3xAmp_network.png?v=1" width="48%" /><img src="figures/5xAmp_network.png?v=1" width="48%" />
+
+
+### Differential co-accessibility analysis
+
+To investigate how co-accessibility networks changed between conditions, we compared the links identified in each condition.
+
+A co-accessibility score threshold of 0.5 was applied to define the links included in the comparison. Genomic region pairs were matched between conditions, irrespective of the order in which the two regions appeared in the original output.
+
+Links were then classified into three categories:
+
+- **Shared links:** detected above the score threshold in both conditions.
+- **Gained links:** detected above the threshold in the second condition but not in the first.
+- **Lost links:** detected above the threshold in the first condition but not in the second.
+
+This comparison identifies changes in the detected co-accessibility networks between conditions. An increase in gained links may indicate changes in chromatin regulatory organisation and potentially reflect shifts in cellular programmes.
+
+Importantly, these categories represent differences in detected links based on a score threshold; they are not statistical tests of differential co-accessibility. Gained or lost links should therefore be interpreted as candidate changes requiring further investigation, rather than proof of altered regulatory interactions.
+
+| Comparison | Shared | Gained |
+|---|---:|---:|
+| control vs 1xAmp | 137,737 | 1,645 |
+| control vs 3xAmp | 175,009 | 1,066 |
+| control vs 5xAmp | 503,643 | 72,671 |
+| 1xAmp vs 3xAmp | 130,914 | 45,161 |
+| 3xAmp vs 5xAmp | 175,010 | 401,304 |
+| 1xAmp vs 5xAmp | 139,262 | 437,052 |
+
+
 ## References 
 
 1. SnapATAC2: Zhang, K., Zemke, N. R., Armand, E. J., & Ren, B. (2024). A fast, scalable and versatile tool for analysis of single-cell omics data. Nature methods, 21(2), 217-227.
