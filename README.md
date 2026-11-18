@@ -577,6 +577,8 @@ Following network construction, CIRCE was used to identify co-accessible chromat
 
 For visualisation, we selected the two largest CCAN modules, based on the number of significant co-accessibility links they contained. Networks were coloured by CCAN membership, with node size reflecting the number of connections of each region. Where necessary, only the highest-scoring co-accessibility links were displayed to keep the visualisations manageable.
 
+> ⚠️ Only n=2 modules were plotted
+
 <img src="figures/control_network.png?v=2" width="48%" /><img src="figures/1xAmp_network.png?v=2" width="48%" />
 
 <img src="figures/3xAmp_network.png?v=2" width="48%" /><img src="figures/5xAmp_network.png?v=2" width="48%" />
